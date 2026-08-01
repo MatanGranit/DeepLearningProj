@@ -12,26 +12,20 @@ import torch
 import torch.nn as nn
 
 class EfficientPssCnn(nn.Module):
-    """Optimal RF-CNN: Overlapping windows to preserve continuous phase."""
     def __init__(self, fft_binsize: int = 2048):
         super().__init__()
         self.fft_binsize = fft_binsize
         
         self.features = nn.Sequential(
-            # שכבה 1: צמצום פי 8, אבל עם חלון של 12 כדי לייצר חפיפה (Overlap)
-            # האורך יורד מ-2048 ל-256
             nn.Conv1d(in_channels=2, out_channels=4, kernel_size=12, stride=8, padding=2),
             nn.LeakyReLU(0.1),
             
-            # שכבה 2: צמצום פי 8, עם חפיפה של 4 דגימות
-            # האורך יורד מ-256 ל-32
             nn.Conv1d(in_channels=4, out_channels=8, kernel_size=12, stride=8, padding=2),
             nn.LeakyReLU(0.1)
         )
         
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            # נשארו 8 ערוצים באורך 32 = 256 מאפיינים.
             nn.Linear(in_features=8 * 32, out_features=4) 
         )
 

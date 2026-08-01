@@ -7,14 +7,6 @@ For each noise level this measures:
   1. How often the model correctly says "no signal" (class 3).
   2. When it's wrong, which cell ID (0/1/2) it hallucinates out of pure noise.
 
-Drop this file next to data_loader.py, train.py, and correlator.py and run it.
-
-NOTE ON THE NOISE BUG: data_loader.generate_noise_vector() scales noise by
-`noise_power` (a variance) instead of `noise_std = sqrt(noise_power/2)`, which
-makes `noise_db` barely affect anything in the original pipeline. This script
-generates its own noise-only batches with the corrected scaling so the sweep
-below is actually meaningful. Set FIX_NOISE_BUG = False to reproduce the
-original (buggy) behavior instead.
 """
 
 import os

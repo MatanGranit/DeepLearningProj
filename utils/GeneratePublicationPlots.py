@@ -11,7 +11,6 @@ from matplotlib.ticker import FuncFormatter, MultipleLocator, MaxNLocator
 from thop import profile
 from torch.utils.data import ConcatDataset, DataLoader
 
-# --- שינוי 1: ייבוא ה-CNN במקום הרשת הישנה ---
 from net import EfficientPssCnn, train_model, correct_frequency_offset
 from data_loader import PssDataset
 from correlator import Correlator
@@ -117,7 +116,6 @@ def generate_publication_quality_plots():
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Using device: {device}")
 
-    # --- שינוי 2: אתחול של ה-CNN ---
     net = EfficientPssCnn().to(device)
     corr = Correlator()
 

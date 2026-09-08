@@ -17,25 +17,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
 
-from data_loader import generate_pss, PssDataset
+from data_loader import generate_noise_vector, generate_pss, PssDataset
 from net import EfficientPssCnn, correct_frequency_offset, train_model
 from correlator import Correlator
 
-FIX_NOISE_BUG = True
 FFT_BINSIZE = 2048
 MODEL_PATH = "pss_cnn_model.pth"
 
 
-def generate_noise_only_batch(num_samples: int, noise_db: float, fix_bug: bool = FIX_NOISE_BUG):
+def generate_noise_only_batch(num_samples: int, snr_db: float):
     """Pure noise, no PSS at all -- ground truth label is always 3."""
     pss0 = generate_pss(0)
-    signal_power = torch.sum(torch.abs(pss0) ** 2) / FFT_BINSIZE
-    noise_power = signal_power / (10.0 ** (noise_db / 10.0))
-    scale = torch.sqrt(noise_power / 2.0) if fix_bug else noise_power
-
-    noise_real = torch.randn(num_samples, FFT_BINSIZE)
-    noise_imag = torch.randn(num_samples, FFT_BINSIZE)
-    samples = scale * torch.complex(noise_real, noise_imag)
+    samples = generate_noise_vector(num_samples, snr_db, pss0)
 
     # freq_offset is still sampled (it's part of the real inference path,
     # even though it does nothing meaningful to pure noise)
@@ -44,7 +37,7 @@ def generate_noise_only_batch(num_samples: int, noise_db: float, fix_bug: bool =
     return samples, labels, freq_offset
 
 
-def evaluate_noise_only(model, correlator, noise_db_values, num_samples=1000, device="cpu"):
+def evaluate_noise_only(model, correlator, snr_db_values, num_samples=1000, device="cpu"):
     model.eval()
     n = torch.arange(FFT_BINSIZE, device=device)
 
@@ -52,8 +45,8 @@ def evaluate_noise_only(model, correlator, noise_db_values, num_samples=1000, de
     corr_preds_by_db = {}
 
     with torch.no_grad():
-        for noise_db in noise_db_values:
-            samples, _labels, freq_offset = generate_noise_only_batch(num_samples, noise_db)
+        for snr_db in snr_db_values:
+            samples, _labels, freq_offset = generate_noise_only_batch(num_samples, snr_db)
             samples = samples.to(device)
             freq_offset = freq_offset.to(device)
 
@@ -64,8 +57,8 @@ def evaluate_noise_only(model, correlator, noise_db_values, num_samples=1000, de
             corr_onehot = correlator.find_cell_id(freq_offset.cpu(), samples.cpu())
             corr_pred = torch.argmax(corr_onehot, dim=1)
 
-            nn_preds_by_db[noise_db] = nn_pred
-            corr_preds_by_db[noise_db] = corr_pred
+            nn_preds_by_db[snr_db] = nn_pred
+            corr_preds_by_db[snr_db] = corr_pred
 
     return nn_preds_by_db, corr_preds_by_db
 
@@ -94,7 +87,7 @@ def main():
         print(f"Loaded weights from {MODEL_PATH}")
     else:
         print("No saved weights found -- training a fresh model first...")
-        train_loader = DataLoader(PssDataset(num_samples=5000, noise_db=10.0), batch_size=32, shuffle=True)
+        train_loader = DataLoader(PssDataset(num_samples=5000, snr_db=10.0), batch_size=32, shuffle=True)
         train_model(net, train_loader, epochs=5)
         torch.save(net.state_dict(), MODEL_PATH)
 
@@ -127,7 +120,7 @@ def main():
     ax = axes[0]
     ax.plot(noise_db_values, nn_correct, marker='o', linewidth=2, label="Neural net", color="#0072B2")
     ax.plot(noise_db_values, corr_correct, marker='s', linewidth=2, label="Correlator", color="#009E73")
-    ax.set_xlabel("noise_db (higher = less noise)")
+    ax.set_xlabel("Reference SNR (dB)")
     ax.set_ylabel("Correctly classified as 'No Signal' (%)")
     ax.set_title("Pure noise input: does it correctly say 'no signal'?")
     ax.set_ylim(-2, 105)
@@ -141,7 +134,7 @@ def main():
     for c in range(3):
         ax.bar(x_labels, nn_breakdown[:, c], bottom=bottom, label=f"hallucinated cell {c}", color=colors[c])
         bottom += nn_breakdown[:, c]
-    ax.set_xlabel("noise_db")
+    ax.set_xlabel("Reference SNR (dB)")
     ax.set_ylabel("# false detections (out of 1000 noise-only samples)")
     ax.set_title("When the NET is wrong on noise-only input,\nwhich cell ID does it hallucinate?")
     ax.legend()

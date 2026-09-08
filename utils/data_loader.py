@@ -1,7 +1,8 @@
-import torch
-from torch._C import dtype
-from torch.utils.data import Dataset, DataLoader
+from typing import List, Sequence, Union
+
 import math
+import torch
+from torch.utils.data import Dataset, DataLoader
 
 
 
@@ -40,88 +41,96 @@ def generate_pss(n_id) -> torch.Tensor:
     return pss_time_domain
 
 
-def generate_noise_vector(num_samples: int, noise_db: float, pss_sequence_td: torch.Tensor) -> torch.Tensor:
+def generate_noise_vector(
+    num_samples: int,
+    snr_db: Union[float, Sequence[float]],
+    pss_sequence_td: torch.Tensor,
+) -> torch.Tensor:
     """
-    generate noise vector given the DB
+    Generate circularly symmetric complex AWGN at the requested SNR.
+
+    SNR is defined using average time-domain powers:
+        SNR = E[|s|^2] / E[|n|^2].
     :param num_samples:
-    :param noise_db: noise level in dB
+    :param snr_db: scalar SNR in dB, or [minimum, maximum] for per-sample SNRs
     :param pss_sequence_td: sample of pss sequence in time domain to have sample of PSS power
     :return: noise vector in time domain
     """
-    # compute the noise's sigma
     fft_binsize = pss_sequence_td.shape[0]
+    signal_power = torch.mean(torch.abs(pss_sequence_td) ** 2)
 
-    # signal power - E[s^2]
-    signal_power = torch.sum(torch.abs(pss_sequence_td) ** 2) / fft_binsize
+    if isinstance(snr_db, (list, tuple)):
+        if len(snr_db) != 2:
+            raise ValueError("snr_db must be a scalar or a [minimum, maximum] pair")
+        snr_min, snr_max = sorted(float(value) for value in snr_db)
+        snr_db_tensor = torch.empty(num_samples).uniform_(snr_min, snr_max)
+    else:
+        snr_db_tensor = torch.full((num_samples,), float(snr_db))
 
-    # 1. Calculate total noise power (Variance)
-    noise_power = signal_power / (10.0 ** (noise_db / 10.0))
+    snr_linear = torch.pow(10.0, snr_db_tensor / 10.0)
+    noise_variance = signal_power / snr_linear
+    component_std = torch.sqrt(noise_variance / 2.0)
 
-    # 2. Calculate the standard deviation for complex noise
-    # Since power splits equally across real and imaginary parts, variance per part is (noise_power / 2)
-    # Standard deviation is the square root of the variance
-    noise_std = math.sqrt(noise_power / 2.0)
-
-    # 3. Generate standard normal noise
     noise_real = torch.randn((num_samples, fft_binsize), dtype=torch.float32)
     noise_imag = torch.randn((num_samples, fft_binsize), dtype=torch.float32)
-    
-    # 4. Scale by the STANDARD DEVIATION, not the power!
-    noise_matrix = noise_std * (noise_real + 1j * noise_imag)
-    
-    return noise_matrix
+    return component_std[:, None] * (noise_real + 1j * noise_imag)
 
 
 class PssDataset(Dataset):
-    def __init__(self, num_samples: int=int(1e4), noise_db: float=None):
+    def __init__(
+        self,
+        num_samples: int = int(1e4),
+        snr_db: Union[float, List[float], None] = None,
+    ):
         """
         initialize vector of labels (cell ids), pss sequences (1 per cell_id) and frequency shifts.
         :param num_samples: number of samples to create
-        :param noise_db: noise level in dB
+        :param snr_db: SNR in dB. Labels 0--2 are PSS IDs and label 3 is noise only.
         """
         fft_binsize = 2048
         # initialize data
-        # UPDATE 1: sample random cell ids from 0 to 3 (4 classes total)
-        labels = torch.randint(low=0, high=4, size=(num_samples,), dtype=torch.long)
+        self.labels = torch.randint(low=0, high=4, size=(num_samples,), dtype=torch.long)
         
         pss_sequences_td = {l: generate_pss(l) for l in range(3)}
-        # UPDATE 2: Add label 3 (No Signal) as an array of pure zeros
         pss_sequences_td[3] = torch.zeros_like(pss_sequences_td[0])
-        
-        samples = torch.stack([pss_sequences_td[labels[i].item()] for i in range(num_samples)])
+        samples = torch.stack(
+            [pss_sequences_td[label.item()] for label in self.labels]
+        )
 
         # sample random frequency offsets (within fft grid) and add them to create real samples
-        self.freq_offset = torch.randint(low=0, high=fft_binsize-128, size=(num_samples,))
-        n = torch.arange(fft_binsize)
-        freq_offset_exponent = torch.exp(2j * math.pi * torch.outer(self.freq_offset, n / fft_binsize))
+        self.freq_offset = torch.randint(
+            low=0, high=fft_binsize - 128, size=(num_samples,)
+        )
+        n = torch.arange(fft_binsize, dtype=torch.float32)
+        freq_offset_exponent = torch.exp(
+            2j
+            * math.pi
+            * torch.outer(self.freq_offset.float(), n / fft_binsize)
+        )
         
         # For PSS (0,1,2) this shifts the frequency. For No Signal (3), 0 * shift = 0.
         samples = samples * freq_offset_exponent
         
-        if noise_db is not None:
-            # We use pss_sequences_td[0] to calculate noise power based on a real signal
-            noise = generate_noise_vector(num_samples=num_samples, noise_db=noise_db, pss_sequence_td=pss_sequences_td[0])
-            # For label 3, 'samples' is currently 0, so 0 + noise = pure noise!
+        if snr_db is not None:
+            noise = generate_noise_vector(
+                num_samples=num_samples,
+                snr_db=snr_db,
+                pss_sequence_td=pss_sequences_td[0],
+            )
             samples = samples + noise
-            
+
         self.samples = samples
-        
-        # UPDATE 3: Update one-hot encoding size to 4 classes
-        self.labels_hot_ones = torch.zeros((num_samples, 4), dtype=torch.float32) 
-        self.labels_hot_ones[torch.arange(num_samples), labels] = 1.0
 
     def __len__(self):
         # return the total number of samples
-        return self.labels_hot_ones.shape[0]
+        return self.labels.shape[0]
 
     def __getitem__(self, idx):
-        # retrieve a single sample and its corresponding label
-        # (I removed the unused 'label = torch.zeros...' line that was here)
-        return self.samples[idx], self.labels_hot_ones[idx], self.freq_offset[idx]
+        return self.samples[idx], self.labels[idx], self.freq_offset[idx]
     
 
 if __name__ == '__main__':
-    dataset = DataLoader(PssDataset(noise_db=None), shuffle=True, batch_size=32)
+    dataset = DataLoader(PssDataset(snr_db=None), shuffle=True, batch_size=32)
     for a in dataset:
         break
 

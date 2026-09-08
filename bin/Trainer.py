@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 from utils.DataLoader import PssDataset
 from utils.PssNnDetector import PssNnDetector
 from utils.common_functions import write_output, CHECKPOINT_DIR, LoggingParameters
-from utils.correlator import PssCorrelator
+from utils.correlator import Correlator
 
 
 
@@ -18,7 +18,7 @@ class Trainer:
     """
     def __init__(self, optimizer: optim.Optimizer, model: PssNnDetector,
                  dev: device, batch_size: int=32, n_epoch: int=20):
-        self.correlator = PssCorrelator().to(dev).eval()
+        self.correlator = Correlator()
         self.model = model.to(dev)
         self.optimizer = optimizer
         self.criterion = nn.CrossEntropyLoss()
@@ -101,10 +101,7 @@ class Trainer:
         :param use_correlator: use correlation or not
         :return: (avg_loss, accuracy): tuple containing the average loss and accuracy across all dataset samples.
         """
-        if use_correlator:
-            model = self.correlator
-        else:
-            model = self.model
+        model = self.model
         model.eval()
         self.valid_dataset = PssDataset(num_samples=int(500), snr_db=self.current_snr)
         dataloader = DataLoader(self.valid_dataset, batch_size=self.batch_size, shuffle=False)
@@ -113,13 +110,20 @@ class Trainer:
         correct_labeled_samples = 0
         n_batches = len(dataloader)
 
-        for batch_idx, (inputs, labels, _) in enumerate(dataloader):
+        for batch_idx, (inputs, labels, freq_offset) in enumerate(dataloader):
+            inputs = inputs.to(self.device)
+            labels = labels.to(self.device)
             cur_nof_samples = labels.shape[0]
 
             # no gradient
             with torch.no_grad():
                 # compute forward pass
-                model_output = model(inputs)
+                if use_correlator:
+                    model_output = self.correlator.find_cell_id(
+                        freq_offset.cpu(), inputs.cpu()
+                    ).float().to(self.device)
+                else:
+                    model_output = model(inputs)
                 classification = model_output.argmax(axis=-1)
 
                 # compute loss
@@ -129,7 +133,7 @@ class Trainer:
             nof_samples += cur_nof_samples
             correct_labeled_samples += int(torch.sum(classification == labels))
 
-        avg_loss = total_loss / (n_batches + 1)
+        avg_loss = total_loss / n_batches
         accuracy = correct_labeled_samples * 100 / nof_samples
         print(f'Epoch [{epoch:03d}] | Loss: {avg_loss:.3f} | '
               f'Acc: {accuracy:.2f}[%] '
@@ -205,16 +209,20 @@ class Trainer:
 
         # define models and load the weights
         model_filename = f"{logging_parameters.model_name}_{logging_parameters.optimizer_name}.pt"
-        self.model.load_state_dict(torch.load(os.path.join(CHECKPOINT_DIR, model_filename)))
+        checkpoint = torch.load(
+            os.path.join(CHECKPOINT_DIR, model_filename),
+            map_location=self.device,
+        )
+        self.model.load_state_dict(checkpoint["model"])
         for snr in torch.arange(-10 ,30, 0.25):
             self.current_snr = snr
-            mode_loss, model_acc = self._validate()
-            output_data["model_loss"].append(mode_loss)
-            output_data["model_acc"].append(test_acc)
+            model_loss, model_acc = self._validate()
+            output_data["model_loss"].append(model_loss)
+            output_data["model_acc"].append(model_acc)
 
-            mode_loss, model_acc = self._validate(use_correlator=True)
-            output_data["correlator_loss"].append(mode_loss)
-            output_data["correlator_loss"].append(test_acc)
+            correlator_loss, correlator_acc = self._validate(use_correlator=True)
+            output_data["correlator_loss"].append(correlator_loss)
+            output_data["correlator_acc"].append(correlator_acc)
 
             output_data['snr'].append(snr.item())
 

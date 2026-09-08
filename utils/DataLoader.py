@@ -1,7 +1,6 @@
 from typing import List, Union
 
 import torch
-from torch._C import dtype
 from torch.utils.data import Dataset, DataLoader
 import math
 
@@ -41,7 +40,7 @@ def generate_pss(n_id) -> torch.Tensor:
     pss_time_domain = torch.fft.ifft(torch.fft.ifftshift(pss_freq_domain))
     return pss_time_domain
 
-def generate_noise_vector(num_samples: int, snr_db: Union[float | List], pss_sequence_td: torch.Tensor) -> torch.Tensor:
+def generate_noise_vector(num_samples: int, snr_db: Union[float, List[float]], pss_sequence_td: torch.Tensor) -> torch.Tensor:
     """
     generate noise vector given the DB
     :param num_samples:
@@ -49,10 +48,12 @@ def generate_noise_vector(num_samples: int, snr_db: Union[float | List], pss_seq
     :param pss_sequence_td: sample of pss sequence in time domain to have sample of PSS power
     :return: noise vector in time domain
     """
-    if type(snr_db) is list:
+    if isinstance(snr_db, list):
         snr_max = max(snr_db)
         snr_min = min(snr_db)
         snr_db = torch.rand(num_samples, dtype=torch.float32) * (snr_max - snr_min) + snr_min
+    else:
+        snr_db = torch.full((num_samples,), float(snr_db), dtype=torch.float32)
     # compute the noise's sigma
     fft_binsize = pss_sequence_td.shape[0]
 
@@ -60,13 +61,13 @@ def generate_noise_vector(num_samples: int, snr_db: Union[float | List], pss_seq
     signal_power = torch.sum(torch.abs(pss_sequence_td) ** 2) / fft_binsize
 
     # SNR = 10*log10(E[s^2] / E[n^2])  ->   E[n^2] = E[s^2] / (10^(SNR/10))
-    noise_power = signal_power / ((10.0 ** snr_db) / 10.0)
-    noise_power = noise_power / math.sqrt(2)
+    noise_power = signal_power / torch.pow(10.0, snr_db / 10.0)
+    noise_std = torch.sqrt(noise_power / 2.0)
 
     # compute noise - E[n^2]=sigma
     noise_real = torch.randn((num_samples, fft_binsize), dtype=torch.float32)
     noise_imag = torch.randn((num_samples, fft_binsize), dtype=torch.float32)
-    noise_matrix = noise_power.unsqueeze(1) * (noise_real + 1j * noise_imag)
+    noise_matrix = noise_std.unsqueeze(1) * (noise_real + 1j * noise_imag)
     return noise_matrix
 
 
@@ -94,8 +95,6 @@ class PssDataset(Dataset):
             noise = generate_noise_vector(num_samples=num_samples, snr_db=snr_db, pss_sequence_td=pss_sequences_td[0])
             samples = samples + noise
         self.samples = samples
-        # self.labels_hot_ones = torch.zeros((num_samples, 3), dtype=torch.int)
-        # self.labels_hot_ones[torch.arange(num_samples), labels] = 1
         self.labels = labels
 
     def __len__(self):

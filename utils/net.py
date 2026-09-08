@@ -1,15 +1,11 @@
+import math
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
-import math
 
 from data_loader import PssDataset
 from correlator import Correlator
-
-
-import torch
-import torch.nn as nn
 
 class EfficientPssCnn(nn.Module):
     def __init__(self, fft_binsize: int = 2048):
@@ -56,6 +52,8 @@ class UltraFastPssClassifier(nn.Module):
 
 
 def correct_frequency_offset(samples, freq_offset, n):
+    freq_offset = freq_offset.to(samples.device, dtype=torch.float32)
+    n = n.to(samples.device, dtype=torch.float32)
     exponent = torch.exp(
         2j * math.pi * torch.outer(freq_offset, n / samples.shape[1])
     )
@@ -78,16 +76,15 @@ def train_model(model: nn.Module, dataloader: DataLoader, epochs: int = 5):
         correct_predictions = 0
         total_samples = 0
 
-        for samples, labels_hot_ones, freq_offset in dataloader:
+        for samples, labels, freq_offset in dataloader:
             samples = samples.to(device)
-            labels_hot_ones = labels_hot_ones.to(device)
+            labels = labels.to(device)
             freq_offset = freq_offset.to(device)
 
             optimizer.zero_grad()
 
             samples_corrected = correct_frequency_offset(samples, freq_offset, n)
 
-            labels = torch.argmax(labels_hot_ones, dim=1)
             outputs = model(samples_corrected)
 
             loss = criterion(outputs, labels)
@@ -110,7 +107,12 @@ def train_model(model: nn.Module, dataloader: DataLoader, epochs: int = 5):
         )
 
 
-def evaluate_models(model: nn.Module, correlator, test_dataloader: DataLoader):
+def evaluate_models(
+    model: nn.Module,
+    correlator,
+    test_dataloader: DataLoader,
+    correlator_threshold: float = 0.053,
+):
     model.eval()
 
     device = next(model.parameters()).device
@@ -119,16 +121,16 @@ def evaluate_models(model: nn.Module, correlator, test_dataloader: DataLoader):
     total_samples = 0
     nn_correct = 0
     corr_correct = 0
+    nn_confusion = torch.zeros((4, 4), dtype=torch.long)
+    corr_confusion = torch.zeros((4, 4), dtype=torch.long)
 
     print("\nStarting evaluation on test set...")
 
     with torch.no_grad():
-        for samples, labels_hot_ones, freq_offset in test_dataloader:
+        for samples, true_labels, freq_offset in test_dataloader:
             samples = samples.to(device)
-            labels_hot_ones = labels_hot_ones.to(device)
+            true_labels = true_labels.to(device)
             freq_offset = freq_offset.to(device)
-
-            true_labels = torch.argmax(labels_hot_ones, dim=1)
 
             samples_corrected = correct_frequency_offset(samples, freq_offset, n)
 
@@ -137,9 +139,17 @@ def evaluate_models(model: nn.Module, correlator, test_dataloader: DataLoader):
             nn_correct += (nn_predicted == true_labels).sum().item()
 
             # The correlator threshold logic goes here. (Assuming correlator uses standard correlation)
-            corr_outputs = correlator.find_cell_id(freq_offset.cpu(), samples.cpu())
+            corr_outputs = correlator.find_cell_id(
+                freq_offset.cpu(), samples.cpu(), threshold=correlator_threshold
+            )
             corr_predicted = torch.argmax(corr_outputs, dim=1).to(device)
             corr_correct += (corr_predicted == true_labels).sum().item()
+
+            for truth, nn_prediction, corr_prediction in zip(
+                true_labels.cpu(), nn_predicted.cpu(), corr_predicted.cpu()
+            ):
+                nn_confusion[truth, nn_prediction] += 1
+                corr_confusion[truth, corr_prediction] += 1
 
             total_samples += true_labels.size(0)
 
@@ -148,18 +158,26 @@ def evaluate_models(model: nn.Module, correlator, test_dataloader: DataLoader):
     print(f"Total Test Samples: {total_samples}")
     print(f"Neural Network Accuracy: {100 * nn_correct / total_samples:.2f}%")
     print(f"Classic Correlator Accuracy: {100 * corr_correct / total_samples:.2f}%")
+    for name, confusion in (("Neural Network", nn_confusion), ("Classic Correlator", corr_confusion)):
+        signal_total = confusion[:3, :].sum().item()
+        noise_total = confusion[3, :].sum().item()
+        detected_signal = confusion[:3, :3].sum().item()
+        false_alarms = confusion[3, :3].sum().item()
+        pd = 100.0 * detected_signal / max(signal_total, 1)
+        pfa = 100.0 * false_alarms / max(noise_total, 1)
+        print(f"{name} Pd: {pd:.2f}% | Pfa: {pfa:.2f}%")
     print("-" * 30)
 
 
 if __name__ == "__main__":
     train_dataset = DataLoader(
-        PssDataset(num_samples=5000, noise_db=10.0),
+        PssDataset(num_samples=5000, snr_db=10.0),
         batch_size=32,
         shuffle=True
     )
 
     test_dataset = DataLoader(
-        PssDataset(num_samples=2000, noise_db=10.0),
+        PssDataset(num_samples=2000, snr_db=10.0),
         batch_size=32,
         shuffle=False
     )

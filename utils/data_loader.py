@@ -2,7 +2,7 @@ from typing import List, Sequence, Union
 
 import math
 import torch
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 
 
 
@@ -81,11 +81,15 @@ class PssDataset(Dataset):
         self,
         num_samples: int = int(1e4),
         snr_db: Union[float, List[float], None] = None,
+        random_phase: bool = False,
     ):
         """
         initialize vector of labels (cell ids), pss sequences (1 per cell_id) and frequency shifts.
         :param num_samples: number of samples to create
         :param snr_db: SNR in dB. Labels 0--2 are PSS IDs and label 3 is noise only.
+        :param random_phase: multiply every signal window by an independent
+            phase exp(j*phi), phi uniform on [0, 2*pi). Noise-only windows are
+            unchanged. The default is False to preserve the original results.
         """
         fft_binsize = 2048
         # initialize data
@@ -110,6 +114,10 @@ class PssDataset(Dataset):
         
         # For PSS (0,1,2) this shifts the frequency. For No Signal (3), 0 * shift = 0.
         samples = samples * freq_offset_exponent
+
+        if random_phase:
+            phase = 2 * math.pi * torch.rand(num_samples, dtype=torch.float32)
+            samples = samples * torch.exp(1j * phase[:, None])
         
         if snr_db is not None:
             noise = generate_noise_vector(
@@ -127,11 +135,3 @@ class PssDataset(Dataset):
 
     def __getitem__(self, idx):
         return self.samples[idx], self.labels[idx], self.freq_offset[idx]
-    
-
-if __name__ == '__main__':
-    dataset = DataLoader(PssDataset(snr_db=None), shuffle=True, batch_size=32)
-    for a in dataset:
-        break
-
-    b = 1

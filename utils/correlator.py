@@ -2,15 +2,34 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 import math
 
-from data_loader import generate_pss, PssDataset
+if __package__:
+    from .data_loader import generate_pss, PssDataset
+else:
+    from data_loader import generate_pss, PssDataset
 
 DEFAULT_THRESHOLD = 0.053
 
 
-class Correlator:
-    def __init__(self, batch_size: int = 1):
+class Correlator(torch.nn.Module):
+    def __init__(self, batch_size: int = 1, coherent=False):
+        super().__init__()
         self.fft_binsize = 2048
-        self.pss_td = {l: generate_pss(l) for l in range(3)}
+        self.coherent = coherent
+        templates = torch.stack([generate_pss(i) for i in range(3)])
+        templates = templates / templates.norm(dim=1, keepdim=True)
+        # Real rows compute real and imaginary parts of <template, sample>.
+        real_rows = torch.view_as_real(templates).reshape(3, -1)
+        imag_rows = torch.stack((-templates.imag, templates.real), dim=-1).reshape(3, -1)
+        self.register_buffer("projection", real_rows if coherent else torch.cat((real_rows, imag_rows)))
+
+    def forward(self, corrected_samples):
+        """Scores on already corrected samples; vectorized and device-safe."""
+        real = torch.view_as_real(corrected_samples).reshape(corrected_samples.shape[0], -1)
+        scores = torch.nn.functional.linear(real, self.projection)
+        if not self.coherent:
+            scores = (scores[:, :3].square() + scores[:, 3:].square()).sqrt()
+        norm = real.square().sum(dim=1, keepdim=True).clamp_min(1e-20).sqrt()
+        return scores / norm
 
     def correlation_scores(
         self,
@@ -25,26 +44,14 @@ class Correlator:
         if freq_offset.shape[0] != td_samples.shape[0]:
             raise ValueError("freq_offset and td_samples must have the same batch size")
 
-        n = torch.arange(self.fft_binsize, dtype=torch.float32)
+        n = torch.arange(self.fft_binsize, dtype=torch.float32, device=td_samples.device)
         freq_offset_exp = torch.exp(
             2j
             * math.pi
-            * torch.outer(freq_offset.float(), n / self.fft_binsize)
+            * torch.outer(freq_offset.to(td_samples.device).float(), n / self.fft_binsize)
         )
 
-        correlations = []
-        for cell_id in self.pss_td:
-            ref_signal = freq_offset_exp * self.pss_td[cell_id]
-            numerator = torch.abs(
-                torch.sum(torch.conj(ref_signal) * td_samples, dim=1)
-            )
-            denominator = (
-                torch.linalg.vector_norm(ref_signal, dim=1)
-                * torch.linalg.vector_norm(td_samples, dim=1)
-            )
-            correlations.append(numerator / denominator.clamp_min(1e-12))
-
-        return torch.stack(correlations, dim=1)
+        return self(td_samples * freq_offset_exp.conj())
 
     def find_cell_id(
         self,
@@ -63,14 +70,14 @@ class Correlator:
         """
         batch_size = freq_offset.shape[0]
         
-        output = torch.zeros((batch_size, 4), dtype=torch.int64)
+        output = torch.zeros((batch_size, 4), dtype=torch.int64, device=td_samples.device)
         corr_tensor = self.correlation_scores(freq_offset, td_samples)
         
         max_vals, predicted_classes = torch.max(corr_tensor, dim=1)
 
-        predicted_classes[max_vals < threshold] = 3
+        predicted_classes[max_vals <= threshold] = 3
 
-        output[torch.arange(batch_size), predicted_classes] = 1
+        output[torch.arange(batch_size, device=td_samples.device), predicted_classes] = 1
 
         return output
 

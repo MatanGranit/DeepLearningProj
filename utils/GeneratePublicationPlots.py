@@ -1,423 +1,156 @@
-"""
-Generates publication figures with four-class accuracy, probability of
-detection (Pd), probability of false alarm (Pfa), and computational complexity
-for both the neural network and the classic correlator.
-"""
+"""Render measured benchmark results; train once only if no results are present."""
+import json
+import sys
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-from matplotlib.ticker import FuncFormatter, MultipleLocator, MaxNLocator
-from thop import profile
-from torch.utils.data import ConcatDataset, DataLoader
 
-from net import EfficientPssCnn, train_model, correct_frequency_offset
-from data_loader import PssDataset, generate_noise_vector, generate_pss
-from correlator import Correlator
+if __package__:
+    from .benchmark import ROOT, parse_args, run
+    from .evaluation import metrics_from_confusion
+else:
+    from benchmark import ROOT, parse_args, run
+    from evaluation import metrics_from_confusion
 
-SEED = 0
-FFT_BINSIZE = 2048
-NUM_CLASSES = 4
-NUM_PSS_SEQUENCES = 3
-TARGET_CORRELATOR_PFA = 0.01
-CALIBRATION_SAMPLES = 10_000
-CALIBRATION_SNR_DB = -30.0
-
-TRAIN_SAMPLES_PER_SNR = 3000
-TEST_SAMPLES_PER_SNR = 2000
-TRAIN_EPOCHS = 8
-BATCH_SIZE = 64
-
-SNR_RANGE = np.array([0.0, -10.0, -20.0, -22.0, -24.0, -26.0, -28.0, -30.0, -32.0, -34.0, -36.0, -38.0, -40.0, -45.0, -50.0])
+LABELS = {"compact": "Compact neural detector",
+          "correlator_magnitude": "Magnitude correlator",
+          "correlator_coherent": "Coherent correlator"}
+COLORS = {"compact": "#009E73",
+          "correlator_magnitude": "#0072B2", "correlator_coherent": "#333333"}
 
 
-def set_seed(seed):
-    torch.manual_seed(seed)
-    np.random.seed(seed)
+def pooled_metrics(report, snr, model):
+    matrices = [point["metrics"][model]["confusion"] for run_data in report["runs"]
+                for point in run_data["points"] if point["snr_db"] == snr]
+    return metrics_from_confusion(torch.tensor(matrices).sum(dim=0))
 
 
-def build_pooled_training_loader(snr_range, samples_per_snr, batch_size):
-    """
-    Train on data pooled across every SNR in the sweep, so the NN is
-    evaluated at conditions it has actually seen -- not extrapolating.
-    """
-    datasets = [
-        PssDataset(num_samples=samples_per_snr, snr_db=float(snr))
-        for snr in snr_range
-    ]
-    combined = ConcatDataset(datasets)
-    return DataLoader(combined, batch_size=batch_size, shuffle=True)
+def render_results(report, output):
+    output = Path(output)
+    output.mkdir(parents=True, exist_ok=True)
+    names = list(report["runs"][0]["cost"])
+    snrs = sorted(p["snr_db"] for p in report["runs"][0]["points"])
+    plt.rcParams.update({"font.family": "DejaVu Serif", "font.size": 9,
+                         "axes.titlesize": 11, "legend.fontsize": 8, "pdf.fonttype": 42})
+    fig, axes = plt.subplots(2, 2, figsize=(10, 7))
+    metric_keys = ["accuracy", "pd", "pfa"]
+    titles = ["(a) Four-class accuracy", r"(b) Detection probability $P_d$",
+              r"(c) False-alarm probability $P_{fa}$"]
+    for ax, key, title in zip(axes.flat, metric_keys, titles):
+        for name in names:
+            points = [pooled_metrics(report, snr, name) for snr in snrs]
+            values = 100*np.array([p[key] for p in points])
+            ax.plot(snrs, values, label=LABELS[name], color=COLORS[name],
+                    marker="s" if name == "compact" else "o", markersize=3,
+                    linestyle="-" if name == "compact" else "--",
+                    linewidth=2 if name == "compact" else 1.2)
+            if key == "pfa":
+                intervals = 100*np.array([p["pfa_ci95"] for p in points])
+                ax.fill_between(snrs, intervals[:, 0], intervals[:, 1],
+                                color=COLORS[name], alpha=.08)
+        if key == "accuracy":
+            ax.axhline(25, linestyle=":", color="#994444", linewidth=1)
+        if key == "pfa":
+            ax.axhline(100*report["config"]["target_pfa"], color="#994444", linestyle=":")
+        ax.set(title=title, xlabel="Input SNR (dB)" if key != "pfa" else "Reference SNR / noise level (dB)",
+               ylabel="Percent (%)")
+        if key != "pfa":
+            ax.set_ylim(0, 103)
+        else:
+            ax.set_ylim(bottom=0)
+        ax.grid(alpha=.25, linestyle=":")
+    latency = [np.median([r["latency"][name]["64"]["core_us_per_window"] for r in report["runs"]])
+               for name in names]
+    short = {"compact": "Compact detector",
+             "correlator_magnitude": "Magnitude\ncorr.", "correlator_coherent": "Coherent\ncorr."}
+    bars = axes[1, 1].bar([short[n] for n in names], latency, color=[COLORS[n] for n in names])
+    axes[1, 1].bar_label(bars, fmt="%.2f", padding=3, fontsize=8)
+    axes[1, 1].set(title="(d) Measured inference time", ylabel="Microseconds per window",
+                   ylim=(0, max(latency)*1.18))
+    env = report["environment"]
+    axes[1, 1].set_xlabel(f"{env['device'].upper()}, {env['threads']} thread(s), batch 64; correction excluded")
+    for ax in axes.flat:
+        ax.spines[["top", "right"]].set_visible(False)
+    handles, labels = axes[0, 0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", bbox_to_anchor=(.5, .047), ncol=3, frameon=False)
+    fig.text(.5, .012, "Aligned 2048 samples, exact frequency offset, fixed phase, AWGN. "
+             "Each detector calibrated on separate noise; test thresholds frozen.", ha="center", fontsize=8)
+    fig.subplots_adjust(left=.08, right=.98, top=.95, bottom=.18, hspace=.37, wspace=.28)
+    for extension in ("png", "pdf", "svg"):
+        fig.savefig(output / f"academic_results.{extension}", dpi=200, bbox_inches="tight")
+    plt.close(fig)
+
+    # A separate arithmetic plot avoids presenting theoretical operations as speed.
+    fig, ax = plt.subplots(figsize=(7, 3.5), layout="constrained")
+    costs = [report["runs"][0]["cost"][name]["total_real_ops"] for name in names]
+    bars = ax.bar([short[n] for n in names], costs, color=[COLORS[n] for n in names])
+    ax.bar_label(bars, labels=[f"{c:,}" for c in costs], padding=3)
+    ax.set(ylabel="Approximate real arithmetic operations", title="Detector arithmetic, including normalization",
+           ylim=(0, max(costs)*1.18))
+    ax.set_xlabel("Common frequency correction excluded from every bar")
+    fig.savefig(output / "arithmetic_costs.png", dpi=200)
+    plt.close(fig)
+    write_summary(report, output, names, snrs)
 
 
-def calibrate_correlator_threshold(
-    correlator,
-    target_pfa=TARGET_CORRELATOR_PFA,
-    num_samples=CALIBRATION_SAMPLES,
-    snr_db=CALIBRATION_SNR_DB,
-    batch_size=BATCH_SIZE,
-):
-    """Calibrate on independent noise-only data for the requested Pfa."""
-    if not 0.0 < target_pfa < 1.0:
-        raise ValueError("target_pfa must be strictly between 0 and 1")
-
-    pss_reference = generate_pss(0)
-    maximum_scores = []
-
-    for start in range(0, num_samples, batch_size):
-        current_batch_size = min(batch_size, num_samples - start)
-        noise = generate_noise_vector(
-            current_batch_size,
-            snr_db,
-            pss_reference,
-        )
-        frequency_offsets = torch.randint(
-            low=0,
-            high=FFT_BINSIZE - 128,
-            size=(current_batch_size,),
-        )
-        scores = correlator.correlation_scores(frequency_offsets, noise)
-        maximum_scores.append(scores.max(dim=1).values)
-
-    maximum_scores = torch.cat(maximum_scores)
-    threshold = torch.quantile(maximum_scores, 1.0 - target_pfa).item()
-    empirical_pfa = (maximum_scores >= threshold).float().mean().item()
-    return threshold, empirical_pfa
-
-
-def evaluate_at_snr(
-    model,
-    correlator,
-    snr_db,
-    num_samples,
-    batch_size,
-    device,
-    correlator_threshold,
-):
-    """
-    Builds a fresh test set at a single SNR and returns
-    accuracy, Pd and Pfa percentages for both methods.
-    """
-    test_loader = DataLoader(
-        PssDataset(num_samples=num_samples, snr_db=float(snr_db)),
-        batch_size=batch_size,
-        shuffle=False,
-    )
-
-    model.eval()
-    n = torch.arange(FFT_BINSIZE, device=device)
-
-    total = 0
-    nn_correct = 0
-    corr_correct = 0
-    signal_total = 0
-    noise_total = 0
-    nn_detections = 0
-    corr_detections = 0
-    nn_false_alarms = 0
-    corr_false_alarms = 0
-
-    with torch.no_grad():
-        for samples, true_labels, freq_offset in test_loader:
-            samples = samples.to(device)
-            true_labels = true_labels.to(device)
-            freq_offset = freq_offset.to(device)
-
-            samples_corrected = correct_frequency_offset(samples, freq_offset, n)
-
-            nn_outputs = model(samples_corrected)
-            nn_predicted = torch.argmax(nn_outputs, dim=1)
-            nn_correct += (nn_predicted == true_labels).sum().item()
-
-            corr_outputs = correlator.find_cell_id(
-                freq_offset.cpu(),
-                samples.cpu(),
-                threshold=correlator_threshold,
-            )
-            corr_predicted = torch.argmax(corr_outputs, dim=1).to(device)
-            corr_correct += (corr_predicted == true_labels).sum().item()
-
-            signal_mask = true_labels != 3
-            noise_mask = true_labels == 3
-            signal_total += signal_mask.sum().item()
-            noise_total += noise_mask.sum().item()
-
-            nn_detections += ((nn_predicted != 3) & signal_mask).sum().item()
-            corr_detections += ((corr_predicted != 3) & signal_mask).sum().item()
-            nn_false_alarms += ((nn_predicted != 3) & noise_mask).sum().item()
-            corr_false_alarms += ((corr_predicted != 3) & noise_mask).sum().item()
-
-            total += true_labels.size(0)
-
-    return {
-        "nn_accuracy": 100.0 * nn_correct / total,
-        "corr_accuracy": 100.0 * corr_correct / total,
-        "nn_pd": 100.0 * nn_detections / max(signal_total, 1),
-        "corr_pd": 100.0 * corr_detections / max(signal_total, 1),
-        "nn_pfa": 100.0 * nn_false_alarms / max(noise_total, 1),
-        "corr_pfa": 100.0 * corr_false_alarms / max(noise_total, 1),
-    }
+def write_summary(report, output, names, snrs):
+    lines = ["# Measured validation results", "",
+             "Generated from the measured data in benchmark_results.json.", "",
+             f"Training seeds: {report['config']['seeds']}. Epochs: {report['config']['epochs']}. "
+             f"Training samples/SNR: {report['config']['train_per_snr']}.", "",
+             f"Calibration noise windows per SNR/seed: {report['config']['calibration_samples']}; "
+             f"test windows per SNR/seed: {report['config']['test_samples']}.", "",
+             f"Every model is calibrated to the same {100*report['config']['target_pfa']:g}% target; measured test Pfa is reported below. "
+             "A target is not an exact test guarantee.", "",
+             "## Accuracy / Pd / Pfa (%)", "",
+             "| SNR | " + " | ".join(LABELS[n] for n in names) + " |",
+             "|---|" + "---|"*len(names)]
+    for snr in snrs:
+        ms = [pooled_metrics(report, snr, name) for name in names]
+        lines.append(f"| {snr:g} | " + " | ".join(
+            f"{100*m['accuracy']:.2f} / {100*m['pd']:.2f} / {100*m['pfa']:.2f}" for m in ms)+" |")
+    lines += ["", "## Cost and measured latency", "",
+              "Times are medians across runs, in microseconds per window. CPU/GPU data transfer "
+              "is excluded; +CFO includes the common frequency correction. These are local measurements.", "",
+              "| Receiver | Parameters | Conv/Linear MACs | Real ops incl. normalization | Stored bytes | Batch 1 core | Batch 1 +CFO | Batch 64 core | Batch 64 +CFO |",
+              "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    for name in names:
+        c = report['runs'][0]['cost'][name]
+        times = [np.median([r['latency'][name][b][key] for r in report['runs']])
+                 for b in ('1', '64') for key in ('core_us_per_window', 'with_correction_us_per_window')]
+        lines.append(f"| {LABELS[name]} | {c['parameters']:,} | {c['conv_linear_macs']:,} | "
+                     f"{c['total_real_ops']:,} | {c['stored_bytes']:,} | " + " | ".join(f"{t:.2f}" for t in times)+" |")
+    lines += ["", "The neural detector advantage over the magnitude correlator exploits the fixed-phase model. "
+              "The coherent correlator is the stronger, lower-cost classical reference in this model; "
+              "this experiment does not demonstrate a fundamental neural advantage over it.", "",
+              "Shared correction is roughly 8N real arithmetic operations plus N complex exponential "
+              "evaluations for N=2048. It is excluded from all detector operation counts and explicitly "
+              "included in the +CFO latency columns. Operation estimates exclude comparisons and memory movement.", "",
+              "Pfa bands in the plot are pooled 95% Wilson binomial intervals; they do not account "
+              "for all training/calibration variability. Per-seed counts, thresholds, training times, "
+              "raw-argmax diagnostics and intervals are retained in JSON.", "",
+              "Environment: " + json.dumps(report['environment']), ""]
+    (output / "RESULTS.md").write_text("\n".join(lines), encoding="utf-8")
 
 
-def calculate_dynamic_operations(net):
-    net.eval()
-    dummy_input = torch.randn(1, FFT_BINSIZE, dtype=torch.complex64)
-
-    with torch.no_grad():
-        # THOP reports multiply-accumulates (MACs).
-        nn_macs, _ = profile(net, inputs=(dummy_input,), verbose=False)
-
-    # Match the implementation: for each of three PSS references there is one
-    # complex frequency-shift multiplication and one correlation multiplication
-    # per sample. A complex multiply costs 4 real multiplications + 2 additions.
-    complex_multiply_flops = NUM_PSS_SEQUENCES * 2 * FFT_BINSIZE * 6
-    accumulation_flops = NUM_PSS_SEQUENCES * (FFT_BINSIZE - 1) * 2
-    correlator_flops = complex_multiply_flops + accumulation_flops
-
-    # Use the same approximate unit on both sides: one MAC ~= two real FLOPs.
-    nn_flops = 2 * nn_macs
-    return int(correlator_flops), int(nn_flops)
-
-
-def generate_publication_quality_plots():
-    set_seed(SEED)
-
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"Using device: {device}")
-
-    net = EfficientPssCnn().to(device)
-    corr = Correlator()
-
-    # ---- Train once, on data pooled across the whole SNR sweep ----
-    train_loader = build_pooled_training_loader(
-        SNR_RANGE, TRAIN_SAMPLES_PER_SNR, BATCH_SIZE
-    )
-    train_model(net, train_loader, epochs=TRAIN_EPOCHS)
-
-    # Calibrate the correlator on data that is separate from every test set.
-    correlator_threshold, calibration_pfa = calibrate_correlator_threshold(corr)
-    print(
-        f"Calibrated correlator threshold={correlator_threshold:.5f} | "
-        f"validation Pfa={100.0 * calibration_pfa:.2f}%"
-    )
-
-    # ---- Evaluate both models at every SNR point ----
-    nn_accuracies = []
-    corr_accuracies = []
-    nn_pd_values = []
-    corr_pd_values = []
-    nn_pfa_values = []
-    corr_pfa_values = []
-
-    for snr in SNR_RANGE:
-        metrics = evaluate_at_snr(
-            net,
-            corr,
-            snr,
-            TEST_SAMPLES_PER_SNR,
-            BATCH_SIZE,
-            device,
-            correlator_threshold,
-        )
-        nn_accuracies.append(metrics["nn_accuracy"])
-        corr_accuracies.append(metrics["corr_accuracy"])
-        nn_pd_values.append(metrics["nn_pd"])
-        corr_pd_values.append(metrics["corr_pd"])
-        nn_pfa_values.append(metrics["nn_pfa"])
-        corr_pfa_values.append(metrics["corr_pfa"])
-        print(
-            f"SNR={snr:6.1f} dB | "
-            f"NN: acc={metrics['nn_accuracy']:6.2f}% "
-            f"Pd={metrics['nn_pd']:6.2f}% Pfa={metrics['nn_pfa']:6.2f}% | "
-            f"Correlator: acc={metrics['corr_accuracy']:6.2f}% "
-            f"Pd={metrics['corr_pd']:6.2f}% Pfa={metrics['corr_pfa']:6.2f}%"
-        )
-
-    nn_accuracies = np.array(nn_accuracies)
-    corr_accuracies = np.array(corr_accuracies)
-    nn_pd_values = np.array(nn_pd_values)
-    corr_pd_values = np.array(corr_pd_values)
-    nn_pfa_values = np.array(nn_pfa_values)
-    corr_pfa_values = np.array(corr_pfa_values)
-
-    correlator_flops, nn_flops = calculate_dynamic_operations(net)
-    operation_counts = np.array([correlator_flops, nn_flops], dtype=float)
-
-    print(
-        "Calculated complexity -> "
-        f"Correlator: {correlator_flops:,} approximate real FLOPs | "
-        f"NN (CNN): {nn_flops:,} approximate real FLOPs"
-    )
-
-    # Publication-oriented typography
-    plt.rcParams.update({
-        "font.family": "serif",
-        "font.serif": ["Times New Roman", "Times", "DejaVu Serif"],
-        "font.size": 9,
-        "axes.titlesize": 10,
-        "axes.labelsize": 9,
-        "axes.linewidth": 0.8,
-        "xtick.labelsize": 8,
-        "ytick.labelsize": 8,
-        "legend.fontsize": 8,
-        "figure.dpi": 120,
-        "savefig.dpi": 600,
-        "pdf.fonttype": 42,
-        "ps.fonttype": 42,
-    })
-
-    correlator_color = "#0072B2"
-    nn_color = "#009E73"
-    baseline_color = "#8B1A1A"
-    grid_color = "#CFCFCF"
-
-    fig, axes = plt.subplots(
-        2,
-        2,
-        figsize=(7.1, 5.7),
-        constrained_layout=True,
-    )
-    ax1, ax2, ax3, ax4 = axes.ravel()
-
-    # Panel (a): Accuracy versus SNR
-    ax1.plot(
-        SNR_RANGE, corr_accuracies, color=correlator_color, linewidth=1.8,
-        marker="o", markersize=5.2, markerfacecolor="white", markeredgewidth=1.1,
-        label="Classic correlator", zorder=3,
-    )
-    ax1.plot(
-        SNR_RANGE, nn_accuracies, color=nn_color, linewidth=1.8, linestyle="--",
-        marker="s", markersize=5.0, markerfacecolor="white", markeredgewidth=1.1,
-        label="Efficient CNN", zorder=3, # Updated label here too!
-    )
-    ax1.axhline(100 / 4, color=baseline_color, linewidth=1.2, linestyle=":", label="Random guessing", zorder=2)
-
-    ax1.set_title("(a) Four-class accuracy", loc="left", pad=6)
-    ax1.set_xlabel("SNR (dB)")
-    ax1.set_ylabel("Accuracy (%)")
-    ax1.set_xlim(SNR_RANGE.min() - 3, SNR_RANGE.max() + 3)
-    ax1.set_ylim(15, 103)
-    ax1.xaxis.set_major_locator(MultipleLocator(10))
-    ax1.yaxis.set_major_locator(MultipleLocator(10))
-    ax1.grid(axis="both", linestyle=":", linewidth=0.6, color=grid_color, zorder=0)
-    ax1.legend(loc="upper left", frameon=False, handlelength=2.3)
-
-    # Panel (b): probability of detection.
-    ax2.plot(
-        SNR_RANGE, corr_pd_values, color=correlator_color, linewidth=1.8,
-        marker="o", markersize=5.2, markerfacecolor="white", markeredgewidth=1.1,
-        label="Classic correlator", zorder=3,
-    )
-    ax2.plot(
-        SNR_RANGE, nn_pd_values, color=nn_color, linewidth=1.8, linestyle="--",
-        marker="s", markersize=5.0, markerfacecolor="white", markeredgewidth=1.1,
-        label="Efficient CNN", zorder=3,
-    )
-    ax2.set_title(r"(b) Detection probability $P_d$", loc="left", pad=6)
-    ax2.set_xlabel("SNR (dB)")
-    ax2.set_ylabel(r"$P_d$ (%)")
-    ax2.set_xlim(SNR_RANGE.min() - 3, SNR_RANGE.max() + 3)
-    ax2.set_ylim(-3, 103)
-    ax2.xaxis.set_major_locator(MultipleLocator(10))
-    ax2.yaxis.set_major_locator(MultipleLocator(20))
-    ax2.grid(axis="both", linestyle=":", linewidth=0.6, color=grid_color, zorder=0)
-    ax2.legend(loc="lower right", frameon=False, handlelength=2.3)
-
-    # Panel (c): probability of false alarm.
-    ax3.plot(
-        SNR_RANGE, corr_pfa_values, color=correlator_color, linewidth=1.8,
-        marker="o", markersize=5.2, markerfacecolor="white", markeredgewidth=1.1,
-        label="Classic correlator", zorder=3,
-    )
-    ax3.plot(
-        SNR_RANGE, nn_pfa_values, color=nn_color, linewidth=1.8, linestyle="--",
-        marker="s", markersize=5.0, markerfacecolor="white", markeredgewidth=1.1,
-        label="Efficient CNN", zorder=3,
-    )
-    ax3.axhline(
-        100.0 * TARGET_CORRELATOR_PFA,
-        color=baseline_color,
-        linewidth=1.2,
-        linestyle=":",
-        label="Correlator target",
-        zorder=2,
-    )
-    pfa_upper_limit = max(
-        5.0,
-        1.2 * float(max(nn_pfa_values.max(), corr_pfa_values.max())),
-    )
-    ax3.set_title(r"(c) False-alarm probability $P_{fa}$", loc="left", pad=6)
-    ax3.set_xlabel("SNR (dB)")
-    ax3.set_ylabel(r"$P_{fa}$ (%)")
-    ax3.set_xlim(SNR_RANGE.min() - 3, SNR_RANGE.max() + 3)
-    ax3.set_ylim(0, min(100.0, pfa_upper_limit))
-    ax3.xaxis.set_major_locator(MultipleLocator(10))
-    ax3.yaxis.set_major_locator(MaxNLocator(nbins=5))
-    ax3.grid(axis="both", linestyle=":", linewidth=0.6, color=grid_color, zorder=0)
-    ax3.legend(loc="upper right", frameon=False, handlelength=2.3)
-
-    # Panel (d): computational complexity.
-    model_names = ["Classic\ncorrelator", "Efficient CNN"]
-    bars = ax4.bar(
-        model_names, operation_counts, color=[correlator_color, nn_color],
-        width=0.56, edgecolor="#333333", linewidth=0.5, zorder=3,
-    )
-    bars[1].set_hatch("///")
-
-    ax4.set_title("(d) Computational complexity", loc="left", pad=6)
-    ax4.set_ylabel("Approximate real FLOPs")
-    ax4.set_ylim(0, operation_counts.max() * 1.24)
-    ax4.yaxis.set_major_locator(MaxNLocator(nbins=5))
-    ax4.yaxis.set_major_formatter(
-        FuncFormatter(lambda v, _: f"{v / 1000:.0f}k" if v >= 1000 else f"{v:.0f}")
-    )
-    ax4.grid(axis="y", linestyle=":", linewidth=0.6, color=grid_color, zorder=0)
-
-    for bar, value in zip(bars, operation_counts):
-        ax4.annotate(
-            f"{int(value):,}",
-            xy=(bar.get_x() + bar.get_width() / 2, value),
-            xytext=(0, 4), textcoords="offset points",
-            ha="center", va="bottom", fontsize=8,
-        )
-
-    # Dynamic calculation of reduction (will automatically adapt if CNN has more/less ops)
-    if operation_counts[1] < operation_counts[0]:
-        reduction = 100 * (1 - operation_counts[1] / operation_counts[0])
-        ratio = operation_counts[0] / operation_counts[1]
-        text_str = f"{reduction:.1f}% fewer operations\n{ratio:.2f}\u00d7 reduction"
+def main():
+    if "--from-results" in sys.argv:
+        import argparse
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--from-results", type=Path, required=True)
+        options = parser.parse_args()
+        render_results(json.loads(options.from_results.read_text()), options.from_results.parent)
     else:
-        increase = 100 * (operation_counts[1] / operation_counts[0] - 1)
-        ratio = operation_counts[1] / operation_counts[0]
-        text_str = f"{increase:.1f}% more operations\n{ratio:.2f}\u00d7 increase"
-
-    ax4.text(
-        0.97, 0.96,
-        text_str,
-        transform=ax4.transAxes, ha="right", va="top", fontsize=7.5,
-    )
-
-    for ax in (ax1, ax2, ax3, ax4):
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-        ax.tick_params(direction="out", width=0.7, length=3)
-        ax.set_axisbelow(True)
-
-    fig.text(
-        0.5,
-        -0.015,
-        "Assumptions: perfect timing, exact frequency-offset knowledge, "
-        "AWGN-only channel, and one aligned 2048-sample observation window.",
-        ha="center",
-        va="top",
-        fontsize=7.5,
-    )
-
-    fig.savefig("academic_results_figure_cnn.pdf", bbox_inches="tight")
-    fig.savefig("academic_results_figure_cnn.svg", bbox_inches="tight")
-    fig.savefig("academic_results_figure_cnn.png", dpi=600, bbox_inches="tight")
-
-    plt.show()
+        args = parse_args()
+        existing = args.output / "benchmark_results.json"
+        if len(sys.argv) == 1 and existing.exists():
+            report = json.loads(existing.read_text())
+        else:
+            report = run(args)
+        render_results(report, args.output)
 
 
 if __name__ == "__main__":
-    generate_publication_quality_plots()
+    main()

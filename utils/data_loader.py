@@ -102,9 +102,21 @@ class PssDataset(Dataset):
         )
 
         # sample random frequency offsets (within fft grid) and add them to create real samples
-        self.freq_offset = torch.randint(
-            low=0, high=fft_binsize - 128, size=(num_samples,)
+        pss_length = 127
+        legal_freq_offsets = torch.arange(
+            0,
+            fft_binsize - pss_length + 1,
+            80,
+            dtype=torch.long,
         )
+
+        offset_indices = torch.randint(
+            low=0,
+            high=legal_freq_offsets.numel(),
+            size=(num_samples,),
+        )
+
+        self.freq_offset = legal_freq_offsets[offset_indices]
         n = torch.arange(fft_binsize, dtype=torch.float32)
         freq_offset_exponent = torch.exp(
             2j

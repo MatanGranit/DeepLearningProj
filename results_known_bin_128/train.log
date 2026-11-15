@@ -1,0 +1,171 @@
+Seed 91: training narrow_cnn
+Starting training phase...
+Initial validation loss: 1.8749455261230468 | Initial validation Pd: 0.0298
+Epoch 1 | Loss: 0.9930 | Train Accuracy: 54.95% | Validation loss: 0.808687275648117 | Validation Pd: 0.4821653366088867 | LR: 9.94e-04
+Epoch 2 | Loss: 0.7789 | Train Accuracy: 66.48% | Validation loss: 0.7661337119340896 | Validation Pd: 0.49055811762809753 | LR: 9.76e-04
+Epoch 3 | Loss: 0.7469 | Train Accuracy: 69.43% | Validation loss: 0.739744870364666 | Validation Pd: 0.47901803255081177 | LR: 9.46e-04
+Epoch 4 | Loss: 0.7259 | Train Accuracy: 70.88% | Validation loss: 0.7228719019889831 | Validation Pd: 0.4966428875923157 | LR: 9.05e-04
+Epoch 5 | Loss: 0.7125 | Train Accuracy: 71.53% | Validation loss: 0.7112326896190644 | Validation Pd: 0.4907679259777069 | LR: 8.54e-04
+Epoch 6 | Loss: 0.7043 | Train Accuracy: 71.89% | Validation loss: 0.705343434214592 | Validation Pd: 0.48825010657310486 | LR: 7.94e-04
+Epoch 7 | Loss: 0.6993 | Train Accuracy: 71.99% | Validation loss: 0.701858967244625 | Validation Pd: 0.5002098083496094 | LR: 7.27e-04
+Epoch 8 | Loss: 0.6961 | Train Accuracy: 72.04% | Validation loss: 0.7000870010256768 | Validation Pd: 0.4985312521457672 | LR: 6.55e-04
+Epoch 9 | Loss: 0.6944 | Train Accuracy: 72.05% | Validation loss: 0.6991465434432029 | Validation Pd: 0.4979017972946167 | LR: 5.78e-04
+Epoch 10 | Loss: 0.6929 | Train Accuracy: 72.08% | Validation loss: 0.6995266345143318 | Validation Pd: 0.49832144379615784 | LR: 5.00e-04
+Epoch 11 | Loss: 0.6919 | Train Accuracy: 72.12% | Validation loss: 0.6976895695924759 | Validation Pd: 0.49748215079307556 | LR: 4.22e-04
+Epoch 12 | Loss: 0.6910 | Train Accuracy: 72.20% | Validation loss: 0.6984292274713516 | Validation Pd: 0.49118757247924805 | LR: 3.45e-04
+Epoch 13 | Loss: 0.6902 | Train Accuracy: 72.21% | Validation loss: 0.6978726753592491 | Validation Pd: 0.49328577518463135 | LR: 2.73e-04
+Epoch 14 | Loss: 0.6895 | Train Accuracy: 72.24% | Validation loss: 0.6977924317121506 | Validation Pd: 0.49538397789001465 | LR: 2.06e-04
+Epoch 15 | Loss: 0.6889 | Train Accuracy: 72.34% | Validation loss: 0.6980134961009026 | Validation Pd: 0.4951741397380829 | LR: 1.46e-04
+Epoch 16 | Loss: 0.6883 | Train Accuracy: 72.29% | Validation loss: 0.6976195764541626 | Validation Pd: 0.49601343274116516 | LR: 9.55e-05
+Epoch 17 | Loss: 0.6878 | Train Accuracy: 72.32% | Validation loss: 0.6976692512631416 | Validation Pd: 0.49601343274116516 | LR: 5.45e-05
+Epoch 18 | Loss: 0.6874 | Train Accuracy: 72.38% | Validation loss: 0.6976652324199677 | Validation Pd: 0.4966428875923157 | LR: 2.45e-05
+Epoch 19 | Loss: 0.6871 | Train Accuracy: 72.39% | Validation loss: 0.6976587834954262 | Validation Pd: 0.4966428875923157 | LR: 6.16e-06
+Epoch 20 | Loss: 0.6869 | Train Accuracy: 72.39% | Validation loss: 0.6976587253808976 | Validation Pd: 0.4966428875923157 | LR: 0.00e+00
+Seed 91, random phase, SNR -26.0: narrow_cnn: Pd=1.7, Pfa=0.81 | correlator_magnitude: Pd=1.8, Pfa=0.91
+Seed 91, random phase, SNR -24.0: narrow_cnn: Pd=1.9, Pfa=0.79 | correlator_magnitude: Pd=2.0, Pfa=0.89
+Seed 91, random phase, SNR -22.0: narrow_cnn: Pd=3.8, Pfa=0.85 | correlator_magnitude: Pd=4.2, Pfa=0.90
+Seed 91, random phase, SNR -21.5: narrow_cnn: Pd=4.1, Pfa=1.27 | correlator_magnitude: Pd=4.1, Pfa=1.32
+Seed 91, random phase, SNR -21.0: narrow_cnn: Pd=4.7, Pfa=1.39 | correlator_magnitude: Pd=5.2, Pfa=1.79
+Seed 91, random phase, SNR -20.5: narrow_cnn: Pd=5.7, Pfa=1.16 | correlator_magnitude: Pd=5.8, Pfa=1.06
+Seed 91, random phase, SNR -20.0: narrow_cnn: Pd=6.2, Pfa=1.39 | correlator_magnitude: Pd=6.3, Pfa=1.44
+Seed 91, random phase, SNR -19.5: narrow_cnn: Pd=7.2, Pfa=1.22 | correlator_magnitude: Pd=7.2, Pfa=1.17
+Seed 91, random phase, SNR -19.0: narrow_cnn: Pd=8.1, Pfa=1.22 | correlator_magnitude: Pd=8.0, Pfa=1.22
+Seed 91, random phase, SNR -18.5: narrow_cnn: Pd=9.4, Pfa=0.64 | correlator_magnitude: Pd=10.1, Pfa=0.84
+Seed 91, random phase, SNR -18.0: narrow_cnn: Pd=13.2, Pfa=1.43 | correlator_magnitude: Pd=13.3, Pfa=1.33
+Seed 91, random phase, SNR -17.5: narrow_cnn: Pd=12.2, Pfa=0.40 | correlator_magnitude: Pd=12.7, Pfa=0.60
+Seed 91, random phase, SNR -17.0: narrow_cnn: Pd=16.4, Pfa=0.69 | correlator_magnitude: Pd=16.7, Pfa=0.83
+Seed 91, random phase, SNR -16.5: narrow_cnn: Pd=20.5, Pfa=1.59 | correlator_magnitude: Pd=20.6, Pfa=1.30
+Seed 91, random phase, SNR -16.0: narrow_cnn: Pd=23.5, Pfa=0.68 | correlator_magnitude: Pd=25.1, Pfa=0.83
+Seed 91, random phase, SNR -15.5: narrow_cnn: Pd=26.5, Pfa=0.92 | correlator_magnitude: Pd=27.7, Pfa=1.23
+Seed 91, random phase, SNR -15.0: narrow_cnn: Pd=32.5, Pfa=1.43 | correlator_magnitude: Pd=33.0, Pfa=1.33
+Seed 91, random phase, SNR -14.5: narrow_cnn: Pd=37.9, Pfa=0.89 | correlator_magnitude: Pd=37.7, Pfa=0.84
+Seed 91, random phase, SNR -14.0: narrow_cnn: Pd=44.1, Pfa=0.97 | correlator_magnitude: Pd=43.7, Pfa=0.92
+Seed 91, random phase, SNR -13.5: narrow_cnn: Pd=52.5, Pfa=0.54 | correlator_magnitude: Pd=53.7, Pfa=0.54
+Seed 91, random phase, SNR -13.0: narrow_cnn: Pd=60.4, Pfa=1.19 | correlator_magnitude: Pd=61.6, Pfa=1.29
+Seed 91, random phase, SNR -12.5: narrow_cnn: Pd=67.2, Pfa=1.06 | correlator_magnitude: Pd=66.7, Pfa=0.81
+Seed 91, random phase, SNR -12.0: narrow_cnn: Pd=73.9, Pfa=0.80 | correlator_magnitude: Pd=75.6, Pfa=0.70
+Seed 91, random phase, SNR -11.5: narrow_cnn: Pd=83.2, Pfa=0.96 | correlator_magnitude: Pd=84.1, Pfa=0.82
+Seed 91, random phase, SNR -11.0: narrow_cnn: Pd=87.9, Pfa=0.64 | correlator_magnitude: Pd=88.6, Pfa=0.83
+Seed 91, random phase, SNR -10.5: narrow_cnn: Pd=92.5, Pfa=1.33 | correlator_magnitude: Pd=92.9, Pfa=1.27
+Seed 91, random phase, SNR -10.0: narrow_cnn: Pd=95.8, Pfa=1.48 | correlator_magnitude: Pd=96.2, Pfa=1.43
+Seed 91, random phase, SNR  -9.5: narrow_cnn: Pd=97.5, Pfa=0.69 | correlator_magnitude: Pd=97.6, Pfa=0.84
+Seed 91, random phase, SNR  -9.0: narrow_cnn: Pd=98.6, Pfa=0.84 | correlator_magnitude: Pd=98.6, Pfa=0.89
+Seed 91, random phase, SNR  -8.5: narrow_cnn: Pd=99.8, Pfa=1.07 | correlator_magnitude: Pd=99.8, Pfa=1.07
+Seed 91, random phase, SNR  -8.0: narrow_cnn: Pd=99.8, Pfa=0.90 | correlator_magnitude: Pd=99.8, Pfa=0.90
+Seed 91, random phase, SNR  -7.0: narrow_cnn: Pd=100.0, Pfa=1.25 | correlator_magnitude: Pd=100.0, Pfa=0.80
+Seed 91, random phase, SNR  -5.0: narrow_cnn: Pd=100.0, Pfa=1.17 | correlator_magnitude: Pd=100.0, Pfa=1.17
+Seed 91, random phase, SNR   5.0: narrow_cnn: Pd=100.0, Pfa=0.64 | correlator_magnitude: Pd=100.0, Pfa=0.55
+Seed 92: training narrow_cnn
+Starting training phase...
+Initial validation loss: 1.7607350277900695 | Initial validation Pd: 0.0094
+Epoch 1 | Loss: 0.9851 | Train Accuracy: 55.24% | Validation loss: 0.8020969986915588 | Validation Pd: 0.47058823704719543 | LR: 9.94e-04
+Epoch 2 | Loss: 0.7808 | Train Accuracy: 66.22% | Validation loss: 0.7598845136165618 | Validation Pd: 0.47393763065338135 | LR: 9.76e-04
+Epoch 3 | Loss: 0.7504 | Train Accuracy: 69.18% | Validation loss: 0.7347565722465516 | Validation Pd: 0.4687041938304901 | LR: 9.46e-04
+Epoch 4 | Loss: 0.7307 | Train Accuracy: 70.38% | Validation loss: 0.7174849623441696 | Validation Pd: 0.47958970069885254 | LR: 9.05e-04
+Epoch 5 | Loss: 0.7180 | Train Accuracy: 71.12% | Validation loss: 0.7076576659083367 | Validation Pd: 0.45949339866638184 | LR: 8.54e-04
+Epoch 6 | Loss: 0.7105 | Train Accuracy: 71.40% | Validation loss: 0.7004299741983414 | Validation Pd: 0.4758216440677643 | LR: 7.94e-04
+Epoch 7 | Loss: 0.7057 | Train Accuracy: 71.46% | Validation loss: 0.6971257680654526 | Validation Pd: 0.47268161177635193 | LR: 7.27e-04
+Epoch 8 | Loss: 0.7030 | Train Accuracy: 71.64% | Validation loss: 0.6945807281136512 | Validation Pd: 0.46640151739120483 | LR: 6.55e-04
+Epoch 9 | Loss: 0.7011 | Train Accuracy: 71.70% | Validation loss: 0.6932850688695907 | Validation Pd: 0.47058823704719543 | LR: 5.78e-04
+Epoch 10 | Loss: 0.6998 | Train Accuracy: 71.83% | Validation loss: 0.6925419116020203 | Validation Pd: 0.4695415496826172 | LR: 5.00e-04
+Epoch 11 | Loss: 0.6990 | Train Accuracy: 71.70% | Validation loss: 0.6925283297896385 | Validation Pd: 0.46996021270751953 | LR: 4.22e-04
+Epoch 12 | Loss: 0.6980 | Train Accuracy: 71.73% | Validation loss: 0.6924908012151718 | Validation Pd: 0.46430814266204834 | LR: 3.45e-04
+Epoch 13 | Loss: 0.6974 | Train Accuracy: 71.86% | Validation loss: 0.6917650571465492 | Validation Pd: 0.46347078680992126 | LR: 2.73e-04
+Epoch 14 | Loss: 0.6967 | Train Accuracy: 71.84% | Validation loss: 0.6915748298168183 | Validation Pd: 0.463889479637146 | LR: 2.06e-04
+Epoch 15 | Loss: 0.6960 | Train Accuracy: 71.88% | Validation loss: 0.6916739809513092 | Validation Pd: 0.466610848903656 | LR: 1.46e-04
+Epoch 16 | Loss: 0.6955 | Train Accuracy: 71.90% | Validation loss: 0.6911645951867104 | Validation Pd: 0.47037890553474426 | LR: 9.55e-05
+Epoch 17 | Loss: 0.6949 | Train Accuracy: 71.92% | Validation loss: 0.6911379593610764 | Validation Pd: 0.46828553080558777 | LR: 5.45e-05
+Epoch 18 | Loss: 0.6945 | Train Accuracy: 71.92% | Validation loss: 0.6911063727736473 | Validation Pd: 0.46828553080558777 | LR: 2.45e-05
+Epoch 19 | Loss: 0.6942 | Train Accuracy: 71.94% | Validation loss: 0.6911184072494507 | Validation Pd: 0.46891355514526367 | LR: 6.16e-06
+Epoch 20 | Loss: 0.6940 | Train Accuracy: 71.95% | Validation loss: 0.6911181789636612 | Validation Pd: 0.46891355514526367 | LR: 0.00e+00
+Seed 92, random phase, SNR -26.0: narrow_cnn: Pd=1.9, Pfa=1.24 | correlator_magnitude: Pd=1.7, Pfa=1.14
+Seed 92, random phase, SNR -24.0: narrow_cnn: Pd=1.9, Pfa=0.70 | correlator_magnitude: Pd=2.2, Pfa=0.85
+Seed 92, random phase, SNR -22.0: narrow_cnn: Pd=3.2, Pfa=0.92 | correlator_magnitude: Pd=3.4, Pfa=1.07
+Seed 92, random phase, SNR -21.5: narrow_cnn: Pd=5.1, Pfa=1.51 | correlator_magnitude: Pd=4.7, Pfa=1.46
+Seed 92, random phase, SNR -21.0: narrow_cnn: Pd=4.8, Pfa=0.91 | correlator_magnitude: Pd=4.6, Pfa=0.65
+Seed 92, random phase, SNR -20.5: narrow_cnn: Pd=6.0, Pfa=1.70 | correlator_magnitude: Pd=6.1, Pfa=1.65
+Seed 92, random phase, SNR -20.0: narrow_cnn: Pd=5.4, Pfa=0.70 | correlator_magnitude: Pd=5.4, Pfa=0.70
+Seed 92, random phase, SNR -19.5: narrow_cnn: Pd=6.0, Pfa=0.97 | correlator_magnitude: Pd=6.4, Pfa=0.97
+Seed 92, random phase, SNR -19.0: narrow_cnn: Pd=9.4, Pfa=1.32 | correlator_magnitude: Pd=9.1, Pfa=1.03
+Seed 92, random phase, SNR -18.5: narrow_cnn: Pd=10.4, Pfa=1.47 | correlator_magnitude: Pd=10.8, Pfa=1.52
+Seed 92, random phase, SNR -18.0: narrow_cnn: Pd=11.0, Pfa=0.89 | correlator_magnitude: Pd=11.1, Pfa=0.99
+Seed 92, random phase, SNR -17.5: narrow_cnn: Pd=16.2, Pfa=0.81 | correlator_magnitude: Pd=14.7, Pfa=0.66
+Seed 92, random phase, SNR -17.0: narrow_cnn: Pd=15.4, Pfa=1.12 | correlator_magnitude: Pd=15.9, Pfa=1.22
+Seed 92, random phase, SNR -16.5: narrow_cnn: Pd=19.4, Pfa=0.75 | correlator_magnitude: Pd=20.9, Pfa=1.00
+Seed 92, random phase, SNR -16.0: narrow_cnn: Pd=23.4, Pfa=0.79 | correlator_magnitude: Pd=25.1, Pfa=1.03
+Seed 92, random phase, SNR -15.5: narrow_cnn: Pd=28.0, Pfa=1.42 | correlator_magnitude: Pd=28.8, Pfa=1.26
+Seed 92, random phase, SNR -15.0: narrow_cnn: Pd=31.7, Pfa=0.81 | correlator_magnitude: Pd=33.5, Pfa=1.22
+Seed 92, random phase, SNR -14.5: narrow_cnn: Pd=40.7, Pfa=0.78 | correlator_magnitude: Pd=41.4, Pfa=0.73
+Seed 92, random phase, SNR -14.0: narrow_cnn: Pd=46.2, Pfa=0.86 | correlator_magnitude: Pd=48.2, Pfa=0.91
+Seed 92, random phase, SNR -13.5: narrow_cnn: Pd=53.0, Pfa=0.75 | correlator_magnitude: Pd=54.3, Pfa=0.95
+Seed 92, random phase, SNR -13.0: narrow_cnn: Pd=62.6, Pfa=1.58 | correlator_magnitude: Pd=62.9, Pfa=1.58
+Seed 92, random phase, SNR -12.5: narrow_cnn: Pd=66.8, Pfa=0.69 | correlator_magnitude: Pd=68.8, Pfa=0.83
+Seed 92, random phase, SNR -12.0: narrow_cnn: Pd=74.4, Pfa=0.76 | correlator_magnitude: Pd=76.2, Pfa=0.76
+Seed 92, random phase, SNR -11.5: narrow_cnn: Pd=81.7, Pfa=1.05 | correlator_magnitude: Pd=83.3, Pfa=1.05
+Seed 92, random phase, SNR -11.0: narrow_cnn: Pd=87.3, Pfa=1.12 | correlator_magnitude: Pd=88.3, Pfa=1.02
+Seed 92, random phase, SNR -10.5: narrow_cnn: Pd=92.0, Pfa=1.45 | correlator_magnitude: Pd=92.8, Pfa=1.10
+Seed 92, random phase, SNR -10.0: narrow_cnn: Pd=94.9, Pfa=0.76 | correlator_magnitude: Pd=95.5, Pfa=0.60
+Seed 92, random phase, SNR  -9.5: narrow_cnn: Pd=97.8, Pfa=0.89 | correlator_magnitude: Pd=98.0, Pfa=1.31
+Seed 92, random phase, SNR  -9.0: narrow_cnn: Pd=99.2, Pfa=1.00 | correlator_magnitude: Pd=99.3, Pfa=0.80
+Seed 92, random phase, SNR  -8.5: narrow_cnn: Pd=99.6, Pfa=0.95 | correlator_magnitude: Pd=99.7, Pfa=1.16
+Seed 92, random phase, SNR  -8.0: narrow_cnn: Pd=99.9, Pfa=1.06 | correlator_magnitude: Pd=99.9, Pfa=1.01
+Seed 92, random phase, SNR  -7.0: narrow_cnn: Pd=100.0, Pfa=0.92 | correlator_magnitude: Pd=100.0, Pfa=0.87
+Seed 92, random phase, SNR  -5.0: narrow_cnn: Pd=100.0, Pfa=0.88 | correlator_magnitude: Pd=100.0, Pfa=0.72
+Seed 92, random phase, SNR   5.0: narrow_cnn: Pd=100.0, Pfa=0.70 | correlator_magnitude: Pd=100.0, Pfa=0.75
+Seed 93: training narrow_cnn
+Starting training phase...
+Initial validation loss: 1.8416670894622802 | Initial validation Pd: 0.0158
+Epoch 1 | Loss: 0.9870 | Train Accuracy: 55.23% | Validation loss: 0.8050573140382766 | Validation Pd: 0.49374738335609436 | LR: 9.94e-04
+Epoch 2 | Loss: 0.7864 | Train Accuracy: 65.73% | Validation loss: 0.7644242089986801 | Validation Pd: 0.48124217987060547 | LR: 9.76e-04
+Epoch 3 | Loss: 0.7551 | Train Accuracy: 68.76% | Validation loss: 0.7395446962118148 | Validation Pd: 0.48457691073417664 | LR: 9.46e-04
+Epoch 4 | Loss: 0.7345 | Train Accuracy: 70.21% | Validation loss: 0.7242676782608032 | Validation Pd: 0.48416006565093994 | LR: 9.05e-04
+Epoch 5 | Loss: 0.7216 | Train Accuracy: 71.03% | Validation loss: 0.712809681892395 | Validation Pd: 0.4883284568786621 | LR: 8.54e-04
+Epoch 6 | Loss: 0.7134 | Train Accuracy: 71.21% | Validation loss: 0.7062354144454003 | Validation Pd: 0.47894957661628723 | LR: 7.94e-04
+Epoch 7 | Loss: 0.7085 | Train Accuracy: 71.46% | Validation loss: 0.7020990219712258 | Validation Pd: 0.48374322056770325 | LR: 7.27e-04
+Epoch 8 | Loss: 0.7053 | Train Accuracy: 71.55% | Validation loss: 0.7013080912828445 | Validation Pd: 0.49291372299194336 | LR: 6.55e-04
+Epoch 9 | Loss: 0.7037 | Train Accuracy: 71.68% | Validation loss: 0.6998254045844078 | Validation Pd: 0.4847853183746338 | LR: 5.78e-04
+Epoch 10 | Loss: 0.7023 | Train Accuracy: 71.66% | Validation loss: 0.6983862522244454 | Validation Pd: 0.4843684732913971 | LR: 5.00e-04
+Epoch 11 | Loss: 0.7014 | Train Accuracy: 71.79% | Validation loss: 0.6978334885835648 | Validation Pd: 0.48290956020355225 | LR: 4.22e-04
+Epoch 12 | Loss: 0.7006 | Train Accuracy: 71.74% | Validation loss: 0.6980861899256706 | Validation Pd: 0.4879116415977478 | LR: 3.45e-04
+Epoch 13 | Loss: 0.6998 | Train Accuracy: 71.78% | Validation loss: 0.69769859790802 | Validation Pd: 0.48686954379081726 | LR: 2.73e-04
+Epoch 14 | Loss: 0.6991 | Train Accuracy: 71.79% | Validation loss: 0.6979756906628609 | Validation Pd: 0.4874947965145111 | LR: 2.06e-04
+Epoch 15 | Loss: 0.6984 | Train Accuracy: 71.86% | Validation loss: 0.6978803193569183 | Validation Pd: 0.4856190085411072 | LR: 1.46e-04
+Epoch 16 | Loss: 0.6978 | Train Accuracy: 71.94% | Validation loss: 0.6977568262815476 | Validation Pd: 0.4870779514312744 | LR: 9.55e-05
+Epoch 17 | Loss: 0.6973 | Train Accuracy: 71.97% | Validation loss: 0.6978421926498413 | Validation Pd: 0.4879116415977478 | LR: 5.45e-05
+Epoch 18 | Loss: 0.6969 | Train Accuracy: 72.00% | Validation loss: 0.6977988275885582 | Validation Pd: 0.48770320415496826 | LR: 2.45e-05
+Epoch 19 | Loss: 0.6966 | Train Accuracy: 72.00% | Validation loss: 0.6977978548407555 | Validation Pd: 0.4879116415977478 | LR: 6.16e-06
+Epoch 20 | Loss: 0.6964 | Train Accuracy: 72.01% | Validation loss: 0.6977922731637954 | Validation Pd: 0.48770320415496826 | LR: 0.00e+00
+Seed 93, random phase, SNR -26.0: narrow_cnn: Pd=1.6, Pfa=1.00 | correlator_magnitude: Pd=1.9, Pfa=1.15
+Seed 93, random phase, SNR -24.0: narrow_cnn: Pd=2.7, Pfa=1.42 | correlator_magnitude: Pd=2.6, Pfa=1.62
+Seed 93, random phase, SNR -22.0: narrow_cnn: Pd=2.9, Pfa=0.88 | correlator_magnitude: Pd=3.3, Pfa=1.09
+Seed 93, random phase, SNR -21.5: narrow_cnn: Pd=4.1, Pfa=0.80 | correlator_magnitude: Pd=4.2, Pfa=1.00
+Seed 93, random phase, SNR -21.0: narrow_cnn: Pd=4.9, Pfa=1.18 | correlator_magnitude: Pd=4.8, Pfa=1.18
+Seed 93, random phase, SNR -20.5: narrow_cnn: Pd=5.5, Pfa=1.11 | correlator_magnitude: Pd=5.6, Pfa=1.16
+Seed 93, random phase, SNR -20.0: narrow_cnn: Pd=7.3, Pfa=1.10 | correlator_magnitude: Pd=7.4, Pfa=1.04
+Seed 93, random phase, SNR -19.5: narrow_cnn: Pd=6.8, Pfa=0.71 | correlator_magnitude: Pd=6.9, Pfa=0.66
+Seed 93, random phase, SNR -19.0: narrow_cnn: Pd=7.3, Pfa=0.70 | correlator_magnitude: Pd=7.6, Pfa=0.75
+Seed 93, random phase, SNR -18.5: narrow_cnn: Pd=8.9, Pfa=0.60 | correlator_magnitude: Pd=9.7, Pfa=0.75
+Seed 93, random phase, SNR -18.0: narrow_cnn: Pd=11.1, Pfa=0.45 | correlator_magnitude: Pd=12.3, Pfa=0.71
+Seed 93, random phase, SNR -17.5: narrow_cnn: Pd=12.8, Pfa=0.81 | correlator_magnitude: Pd=12.4, Pfa=0.56
+Seed 93, random phase, SNR -17.0: narrow_cnn: Pd=14.0, Pfa=0.41 | correlator_magnitude: Pd=14.8, Pfa=0.41
+Seed 93, random phase, SNR -16.5: narrow_cnn: Pd=20.8, Pfa=1.05 | correlator_magnitude: Pd=21.8, Pfa=1.10
+Seed 93, random phase, SNR -16.0: narrow_cnn: Pd=23.0, Pfa=0.72 | correlator_magnitude: Pd=25.5, Pfa=0.77
+Seed 93, random phase, SNR -15.5: narrow_cnn: Pd=28.6, Pfa=1.53 | correlator_magnitude: Pd=30.0, Pfa=1.53
+Seed 93, random phase, SNR -15.0: narrow_cnn: Pd=34.7, Pfa=1.48 | correlator_magnitude: Pd=35.5, Pfa=1.08
+Seed 93, random phase, SNR -14.5: narrow_cnn: Pd=40.7, Pfa=1.11 | correlator_magnitude: Pd=43.4, Pfa=1.15
+Seed 93, random phase, SNR -14.0: narrow_cnn: Pd=43.1, Pfa=0.94 | correlator_magnitude: Pd=44.1, Pfa=0.79
+Seed 93, random phase, SNR -13.5: narrow_cnn: Pd=54.9, Pfa=1.03 | correlator_magnitude: Pd=56.1, Pfa=1.27
+Seed 93, random phase, SNR -13.0: narrow_cnn: Pd=60.9, Pfa=1.09 | correlator_magnitude: Pd=62.4, Pfa=0.78
+Seed 93, random phase, SNR -12.5: narrow_cnn: Pd=65.7, Pfa=0.87 | correlator_magnitude: Pd=68.4, Pfa=0.87
+Seed 93, random phase, SNR -12.0: narrow_cnn: Pd=74.9, Pfa=0.95 | correlator_magnitude: Pd=77.3, Pfa=1.15
+Seed 93, random phase, SNR -11.5: narrow_cnn: Pd=82.2, Pfa=0.55 | correlator_magnitude: Pd=83.5, Pfa=0.85
+Seed 93, random phase, SNR -11.0: narrow_cnn: Pd=88.2, Pfa=1.07 | correlator_magnitude: Pd=89.7, Pfa=1.27
+Seed 93, random phase, SNR -10.5: narrow_cnn: Pd=92.1, Pfa=1.38 | correlator_magnitude: Pd=93.3, Pfa=1.07
+Seed 93, random phase, SNR -10.0: narrow_cnn: Pd=94.8, Pfa=0.64 | correlator_magnitude: Pd=95.4, Pfa=0.59
+Seed 93, random phase, SNR  -9.5: narrow_cnn: Pd=97.1, Pfa=0.73 | correlator_magnitude: Pd=97.7, Pfa=0.78
+Seed 93, random phase, SNR  -9.0: narrow_cnn: Pd=98.9, Pfa=0.79 | correlator_magnitude: Pd=99.0, Pfa=0.74
+Seed 93, random phase, SNR  -8.5: narrow_cnn: Pd=99.5, Pfa=0.85 | correlator_magnitude: Pd=99.6, Pfa=1.10
+Seed 93, random phase, SNR  -8.0: narrow_cnn: Pd=99.9, Pfa=1.06 | correlator_magnitude: Pd=100.0, Pfa=0.85
+Seed 93, random phase, SNR  -7.0: narrow_cnn: Pd=100.0, Pfa=0.76 | correlator_magnitude: Pd=100.0, Pfa=0.81
+Seed 93, random phase, SNR  -5.0: narrow_cnn: Pd=100.0, Pfa=1.00 | correlator_magnitude: Pd=100.0, Pfa=1.10
+Seed 93, random phase, SNR   5.0: narrow_cnn: Pd=100.0, Pfa=1.04 | correlator_magnitude: Pd=100.0, Pfa=0.99

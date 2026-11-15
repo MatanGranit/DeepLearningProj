@@ -1,0 +1,141 @@
+Seed 91: training scan_cnn
+Starting training phase...
+Initial validation loss: 1.9118183088302612 | Initial validation Pd: 0.3848
+Epoch 1 | Loss: 1.4522 | Train Accuracy: 51.84% | Validation loss: 1.1943723809719087 | Validation Pd: 0.3697020709514618 | LR: 9.62e-05
+Epoch 2 | Loss: 1.1127 | Train Accuracy: 53.02% | Validation loss: 1.114815709590912 | Validation Pd: 0.36445656418800354 | LR: 8.54e-05
+Epoch 3 | Loss: 1.0829 | Train Accuracy: 53.69% | Validation loss: 1.1091835331916808 | Validation Pd: 0.3688627779483795 | LR: 6.91e-05
+Epoch 4 | Loss: 1.0755 | Train Accuracy: 54.08% | Validation loss: 1.1063805603981018 | Validation Pd: 0.36592531204223633 | LR: 5.00e-05
+Epoch 5 | Loss: 1.0694 | Train Accuracy: 54.39% | Validation loss: 1.1046468049287796 | Validation Pd: 0.36424675583839417 | LR: 3.09e-05
+Epoch 6 | Loss: 1.0642 | Train Accuracy: 54.81% | Validation loss: 1.1036503463983536 | Validation Pd: 0.3627780079841614 | LR: 1.46e-05
+Epoch 7 | Loss: 1.0603 | Train Accuracy: 55.09% | Validation loss: 1.1031283247470856 | Validation Pd: 0.3610994517803192 | LR: 3.81e-06
+Epoch 8 | Loss: 1.0580 | Train Accuracy: 55.33% | Validation loss: 1.1030087649822236 | Validation Pd: 0.3610994517803192 | LR: 0.00e+00
+Seed 91, unknown bin, SNR -26.0: scan_cnn: Pd=1.2, Pfa=0.86 | correlator_magnitude: Pd=2.0, Pfa=0.76
+Seed 91, unknown bin, SNR -24.0: scan_cnn: Pd=1.0, Pfa=1.03 | correlator_magnitude: Pd=2.2, Pfa=0.89
+Seed 91, unknown bin, SNR -22.0: scan_cnn: Pd=1.4, Pfa=1.20 | correlator_magnitude: Pd=3.9, Pfa=0.75
+Seed 91, unknown bin, SNR -20.0: scan_cnn: Pd=1.9, Pfa=1.07 | correlator_magnitude: Pd=5.9, Pfa=1.22
+Seed 91, unknown bin, SNR -19.5: scan_cnn: Pd=1.9, Pfa=0.85 | correlator_magnitude: Pd=8.2, Pfa=1.44
+Seed 91, unknown bin, SNR -19.0: scan_cnn: Pd=1.9, Pfa=0.81 | correlator_magnitude: Pd=8.9, Pfa=1.01
+Seed 91, unknown bin, SNR -18.5: scan_cnn: Pd=2.7, Pfa=1.00 | correlator_magnitude: Pd=10.2, Pfa=1.25
+Seed 91, unknown bin, SNR -18.0: scan_cnn: Pd=3.0, Pfa=1.07 | correlator_magnitude: Pd=11.6, Pfa=0.88
+Seed 91, unknown bin, SNR -17.5: scan_cnn: Pd=3.8, Pfa=0.87 | correlator_magnitude: Pd=14.5, Pfa=1.12
+Seed 91, unknown bin, SNR -17.0: scan_cnn: Pd=4.1, Pfa=0.74 | correlator_magnitude: Pd=16.9, Pfa=0.64
+Seed 91, unknown bin, SNR -16.5: scan_cnn: Pd=6.2, Pfa=1.38 | correlator_magnitude: Pd=23.5, Pfa=1.18
+Seed 91, unknown bin, SNR -16.0: scan_cnn: Pd=7.2, Pfa=0.55 | correlator_magnitude: Pd=24.0, Pfa=0.60
+Seed 91, unknown bin, SNR -15.5: scan_cnn: Pd=8.7, Pfa=0.93 | correlator_magnitude: Pd=30.2, Pfa=1.13
+Seed 91, unknown bin, SNR -15.0: scan_cnn: Pd=11.7, Pfa=1.10 | correlator_magnitude: Pd=35.8, Pfa=1.30
+Seed 91, unknown bin, SNR -14.5: scan_cnn: Pd=15.2, Pfa=1.61 | correlator_magnitude: Pd=42.2, Pfa=1.17
+Seed 91, unknown bin, SNR -14.0: scan_cnn: Pd=18.7, Pfa=0.87 | correlator_magnitude: Pd=48.9, Pfa=0.97
+Seed 91, unknown bin, SNR -13.5: scan_cnn: Pd=23.3, Pfa=0.82 | correlator_magnitude: Pd=54.3, Pfa=1.02
+Seed 91, unknown bin, SNR -13.0: scan_cnn: Pd=30.6, Pfa=1.24 | correlator_magnitude: Pd=60.9, Pfa=0.84
+Seed 91, unknown bin, SNR -12.5: scan_cnn: Pd=38.0, Pfa=1.23 | correlator_magnitude: Pd=68.3, Pfa=0.87
+Seed 91, unknown bin, SNR -12.0: scan_cnn: Pd=46.6, Pfa=0.99 | correlator_magnitude: Pd=78.1, Pfa=0.74
+Seed 91, unknown bin, SNR -11.5: scan_cnn: Pd=56.7, Pfa=0.99 | correlator_magnitude: Pd=83.2, Pfa=1.04
+Seed 91, unknown bin, SNR -11.0: scan_cnn: Pd=63.6, Pfa=0.76 | correlator_magnitude: Pd=88.3, Pfa=0.71
+Seed 91, unknown bin, SNR -10.5: scan_cnn: Pd=72.8, Pfa=1.40 | correlator_magnitude: Pd=92.6, Pfa=0.75
+Seed 91, unknown bin, SNR -10.0: scan_cnn: Pd=82.3, Pfa=0.96 | correlator_magnitude: Pd=96.4, Pfa=0.96
+Seed 91, unknown bin, SNR  -9.5: scan_cnn: Pd=89.7, Pfa=1.52 | correlator_magnitude: Pd=98.4, Pfa=0.64
+Seed 91, unknown bin, SNR  -9.0: scan_cnn: Pd=93.7, Pfa=0.97 | correlator_magnitude: Pd=99.0, Pfa=1.33
+Seed 91, unknown bin, SNR  -8.5: scan_cnn: Pd=97.1, Pfa=0.82 | correlator_magnitude: Pd=99.8, Pfa=1.48
+Seed 91, unknown bin, SNR  -8.0: scan_cnn: Pd=98.7, Pfa=0.88 | correlator_magnitude: Pd=99.9, Pfa=0.88
+Seed 91, unknown bin, SNR  -7.5: scan_cnn: Pd=99.2, Pfa=0.50 | correlator_magnitude: Pd=99.9, Pfa=0.80
+Seed 91, unknown bin, SNR  -7.0: scan_cnn: Pd=99.9, Pfa=0.68 | correlator_magnitude: Pd=100.0, Pfa=1.07
+Seed 91, unknown bin, SNR  -6.5: scan_cnn: Pd=99.9, Pfa=1.21 | correlator_magnitude: Pd=100.0, Pfa=0.95
+Seed 91, unknown bin, SNR  -6.0: scan_cnn: Pd=100.0, Pfa=0.85 | correlator_magnitude: Pd=100.0, Pfa=0.90
+Seed 91, unknown bin, SNR  -5.5: scan_cnn: Pd=100.0, Pfa=1.37 | correlator_magnitude: Pd=100.0, Pfa=1.12
+Seed 91, unknown bin, SNR  -5.0: scan_cnn: Pd=100.0, Pfa=0.94 | correlator_magnitude: Pd=100.0, Pfa=0.79
+Seed 91, unknown bin, SNR   0.0: scan_cnn: Pd=100.0, Pfa=0.76 | correlator_magnitude: Pd=100.0, Pfa=1.32
+Seed 91, unknown bin, SNR   5.0: scan_cnn: Pd=100.0, Pfa=1.32 | correlator_magnitude: Pd=100.0, Pfa=1.18
+Seed 92: training scan_cnn
+Starting training phase...
+Initial validation loss: 1.8815960049629212 | Initial validation Pd: 0.3617
+Epoch 1 | Loss: 1.4501 | Train Accuracy: 51.93% | Validation loss: 1.1820385551452637 | Validation Pd: 0.36215198040008545 | LR: 9.62e-05
+Epoch 2 | Loss: 1.1131 | Train Accuracy: 52.98% | Validation loss: 1.1019613659381866 | Validation Pd: 0.35670924186706543 | LR: 8.54e-05
+Epoch 3 | Loss: 1.0821 | Train Accuracy: 53.57% | Validation loss: 1.096511532664299 | Validation Pd: 0.3500104546546936 | LR: 6.91e-05
+Epoch 4 | Loss: 1.0744 | Train Accuracy: 53.98% | Validation loss: 1.0942673444747926 | Validation Pd: 0.34812644124031067 | LR: 5.00e-05
+Epoch 5 | Loss: 1.0683 | Train Accuracy: 54.51% | Validation loss: 1.0927186369895936 | Validation Pd: 0.3529411852359772 | LR: 3.09e-05
+Epoch 6 | Loss: 1.0632 | Train Accuracy: 54.77% | Validation loss: 1.0916877889633179 | Validation Pd: 0.3477077782154083 | LR: 1.46e-05
+Epoch 7 | Loss: 1.0593 | Train Accuracy: 55.13% | Validation loss: 1.091365817785263 | Validation Pd: 0.35105714201927185 | LR: 3.81e-06
+Epoch 8 | Loss: 1.0569 | Train Accuracy: 55.36% | Validation loss: 1.091251694560051 | Validation Pd: 0.3514758348464966 | LR: 0.00e+00
+Seed 92, unknown bin, SNR -26.0: scan_cnn: Pd=1.2, Pfa=1.54 | correlator_magnitude: Pd=1.9, Pfa=1.14
+Seed 92, unknown bin, SNR -24.0: scan_cnn: Pd=1.1, Pfa=0.70 | correlator_magnitude: Pd=2.0, Pfa=1.05
+Seed 92, unknown bin, SNR -22.0: scan_cnn: Pd=1.1, Pfa=0.77 | correlator_magnitude: Pd=3.8, Pfa=1.07
+Seed 92, unknown bin, SNR -20.0: scan_cnn: Pd=1.9, Pfa=1.27 | correlator_magnitude: Pd=7.3, Pfa=1.41
+Seed 92, unknown bin, SNR -19.5: scan_cnn: Pd=2.0, Pfa=1.01 | correlator_magnitude: Pd=7.6, Pfa=0.96
+Seed 92, unknown bin, SNR -19.0: scan_cnn: Pd=2.6, Pfa=1.49 | correlator_magnitude: Pd=9.8, Pfa=1.54
+Seed 92, unknown bin, SNR -18.5: scan_cnn: Pd=2.1, Pfa=1.45 | correlator_magnitude: Pd=9.7, Pfa=0.65
+Seed 92, unknown bin, SNR -18.0: scan_cnn: Pd=2.8, Pfa=1.07 | correlator_magnitude: Pd=11.4, Pfa=0.92
+Seed 92, unknown bin, SNR -17.5: scan_cnn: Pd=3.5, Pfa=0.88 | correlator_magnitude: Pd=16.5, Pfa=1.28
+Seed 92, unknown bin, SNR -17.0: scan_cnn: Pd=4.3, Pfa=0.96 | correlator_magnitude: Pd=18.5, Pfa=1.42
+Seed 92, unknown bin, SNR -16.5: scan_cnn: Pd=5.2, Pfa=1.09 | correlator_magnitude: Pd=19.4, Pfa=0.84
+Seed 92, unknown bin, SNR -16.0: scan_cnn: Pd=7.0, Pfa=1.06 | correlator_magnitude: Pd=25.3, Pfa=0.50
+Seed 92, unknown bin, SNR -15.5: scan_cnn: Pd=7.9, Pfa=1.07 | correlator_magnitude: Pd=28.6, Pfa=1.12
+Seed 92, unknown bin, SNR -15.0: scan_cnn: Pd=11.5, Pfa=1.25 | correlator_magnitude: Pd=35.8, Pfa=1.15
+Seed 92, unknown bin, SNR -14.5: scan_cnn: Pd=14.9, Pfa=0.98 | correlator_magnitude: Pd=42.5, Pfa=0.79
+Seed 92, unknown bin, SNR -14.0: scan_cnn: Pd=17.3, Pfa=1.37 | correlator_magnitude: Pd=47.3, Pfa=1.26
+Seed 92, unknown bin, SNR -13.5: scan_cnn: Pd=23.2, Pfa=1.12 | correlator_magnitude: Pd=54.1, Pfa=1.27
+Seed 92, unknown bin, SNR -13.0: scan_cnn: Pd=28.2, Pfa=1.22 | correlator_magnitude: Pd=64.6, Pfa=0.78
+Seed 92, unknown bin, SNR -12.5: scan_cnn: Pd=37.9, Pfa=1.11 | correlator_magnitude: Pd=71.7, Pfa=1.16
+Seed 92, unknown bin, SNR -12.0: scan_cnn: Pd=45.1, Pfa=0.85 | correlator_magnitude: Pd=78.2, Pfa=1.00
+Seed 92, unknown bin, SNR -11.5: scan_cnn: Pd=57.1, Pfa=0.94 | correlator_magnitude: Pd=85.1, Pfa=1.73
+Seed 92, unknown bin, SNR -11.0: scan_cnn: Pd=61.9, Pfa=0.83 | correlator_magnitude: Pd=88.1, Pfa=0.69
+Seed 92, unknown bin, SNR -10.5: scan_cnn: Pd=72.1, Pfa=0.46 | correlator_magnitude: Pd=93.0, Pfa=0.71
+Seed 92, unknown bin, SNR -10.0: scan_cnn: Pd=81.6, Pfa=0.95 | correlator_magnitude: Pd=96.4, Pfa=0.95
+Seed 92, unknown bin, SNR  -9.5: scan_cnn: Pd=88.9, Pfa=0.82 | correlator_magnitude: Pd=98.2, Pfa=1.02
+Seed 92, unknown bin, SNR  -9.0: scan_cnn: Pd=93.8, Pfa=1.35 | correlator_magnitude: Pd=99.1, Pfa=1.30
+Seed 92, unknown bin, SNR  -8.5: scan_cnn: Pd=96.3, Pfa=1.06 | correlator_magnitude: Pd=99.7, Pfa=0.76
+Seed 92, unknown bin, SNR  -8.0: scan_cnn: Pd=98.3, Pfa=1.21 | correlator_magnitude: Pd=99.9, Pfa=1.15
+Seed 92, unknown bin, SNR  -7.5: scan_cnn: Pd=99.5, Pfa=1.40 | correlator_magnitude: Pd=100.0, Pfa=0.75
+Seed 92, unknown bin, SNR  -7.0: scan_cnn: Pd=99.8, Pfa=0.80 | correlator_magnitude: Pd=100.0, Pfa=0.80
+Seed 92, unknown bin, SNR  -6.5: scan_cnn: Pd=100.0, Pfa=1.54 | correlator_magnitude: Pd=100.0, Pfa=0.91
+Seed 92, unknown bin, SNR  -6.0: scan_cnn: Pd=100.0, Pfa=1.28 | correlator_magnitude: Pd=100.0, Pfa=1.03
+Seed 92, unknown bin, SNR  -5.5: scan_cnn: Pd=100.0, Pfa=1.75 | correlator_magnitude: Pd=100.0, Pfa=0.72
+Seed 92, unknown bin, SNR  -5.0: scan_cnn: Pd=100.0, Pfa=0.80 | correlator_magnitude: Pd=100.0, Pfa=1.05
+Seed 92, unknown bin, SNR   0.0: scan_cnn: Pd=100.0, Pfa=1.13 | correlator_magnitude: Pd=100.0, Pfa=1.29
+Seed 92, unknown bin, SNR   5.0: scan_cnn: Pd=100.0, Pfa=1.20 | correlator_magnitude: Pd=100.0, Pfa=0.85
+Seed 93: training scan_cnn
+Starting training phase...
+Initial validation loss: 1.8700337672233582 | Initial validation Pd: 0.3589
+Epoch 1 | Loss: 1.4524 | Train Accuracy: 51.91% | Validation loss: 1.181501088142395 | Validation Pd: 0.35556483268737793 | LR: 9.62e-05
+Epoch 2 | Loss: 1.1124 | Train Accuracy: 53.11% | Validation loss: 1.1070045030117035 | Validation Pd: 0.34952062368392944 | LR: 8.54e-05
+Epoch 3 | Loss: 1.0825 | Train Accuracy: 53.77% | Validation loss: 1.1024783676862717 | Validation Pd: 0.3432680368423462 | LR: 6.91e-05
+Epoch 4 | Loss: 1.0748 | Train Accuracy: 54.26% | Validation loss: 1.1002357465028763 | Validation Pd: 0.34701958298683167 | LR: 5.00e-05
+Epoch 5 | Loss: 1.0688 | Train Accuracy: 54.67% | Validation loss: 1.0986608296632767 | Validation Pd: 0.34222593903541565 | LR: 3.09e-05
+Epoch 6 | Loss: 1.0636 | Train Accuracy: 55.12% | Validation loss: 1.097781355381012 | Validation Pd: 0.3441016972064972 | LR: 1.46e-05
+Epoch 7 | Loss: 1.0598 | Train Accuracy: 55.36% | Validation loss: 1.0973287689685822 | Validation Pd: 0.34389328956604004 | LR: 3.81e-06
+Epoch 8 | Loss: 1.0574 | Train Accuracy: 55.69% | Validation loss: 1.0972193312644958 | Validation Pd: 0.34431013464927673 | LR: 0.00e+00
+Seed 93, unknown bin, SNR -26.0: scan_cnn: Pd=1.0, Pfa=0.85 | correlator_magnitude: Pd=1.8, Pfa=1.00
+Seed 93, unknown bin, SNR -24.0: scan_cnn: Pd=1.2, Pfa=0.98 | correlator_magnitude: Pd=2.7, Pfa=1.62
+Seed 93, unknown bin, SNR -22.0: scan_cnn: Pd=1.1, Pfa=1.04 | correlator_magnitude: Pd=3.5, Pfa=1.24
+Seed 93, unknown bin, SNR -20.0: scan_cnn: Pd=1.9, Pfa=0.80 | correlator_magnitude: Pd=6.8, Pfa=0.65
+Seed 93, unknown bin, SNR -19.5: scan_cnn: Pd=2.0, Pfa=1.08 | correlator_magnitude: Pd=8.0, Pfa=1.23
+Seed 93, unknown bin, SNR -19.0: scan_cnn: Pd=2.1, Pfa=0.81 | correlator_magnitude: Pd=9.1, Pfa=0.91
+Seed 93, unknown bin, SNR -18.5: scan_cnn: Pd=2.5, Pfa=0.63 | correlator_magnitude: Pd=11.7, Pfa=1.15
+Seed 93, unknown bin, SNR -18.0: scan_cnn: Pd=3.0, Pfa=1.01 | correlator_magnitude: Pd=11.6, Pfa=0.71
+Seed 93, unknown bin, SNR -17.5: scan_cnn: Pd=3.1, Pfa=0.90 | correlator_magnitude: Pd=13.5, Pfa=0.65
+Seed 93, unknown bin, SNR -17.0: scan_cnn: Pd=4.6, Pfa=0.96 | correlator_magnitude: Pd=16.6, Pfa=0.75
+Seed 93, unknown bin, SNR -16.5: scan_cnn: Pd=5.5, Pfa=1.16 | correlator_magnitude: Pd=20.8, Pfa=0.81
+Seed 93, unknown bin, SNR -16.0: scan_cnn: Pd=7.2, Pfa=0.86 | correlator_magnitude: Pd=24.5, Pfa=0.66
+Seed 93, unknown bin, SNR -15.5: scan_cnn: Pd=9.2, Pfa=0.62 | correlator_magnitude: Pd=26.4, Pfa=0.57
+Seed 93, unknown bin, SNR -15.0: scan_cnn: Pd=11.9, Pfa=1.30 | correlator_magnitude: Pd=37.6, Pfa=1.25
+Seed 93, unknown bin, SNR -14.5: scan_cnn: Pd=15.4, Pfa=1.20 | correlator_magnitude: Pd=41.6, Pfa=1.06
+Seed 93, unknown bin, SNR -14.0: scan_cnn: Pd=19.7, Pfa=0.92 | correlator_magnitude: Pd=49.1, Pfa=1.38
+Seed 93, unknown bin, SNR -13.5: scan_cnn: Pd=25.5, Pfa=1.08 | correlator_magnitude: Pd=56.5, Pfa=1.23
+Seed 93, unknown bin, SNR -13.0: scan_cnn: Pd=30.0, Pfa=0.77 | correlator_magnitude: Pd=65.0, Pfa=1.15
+Seed 93, unknown bin, SNR -12.5: scan_cnn: Pd=38.3, Pfa=0.64 | correlator_magnitude: Pd=69.3, Pfa=1.28
+Seed 93, unknown bin, SNR -12.0: scan_cnn: Pd=47.5, Pfa=1.37 | correlator_magnitude: Pd=79.3, Pfa=1.22
+Seed 93, unknown bin, SNR -11.5: scan_cnn: Pd=56.2, Pfa=0.94 | correlator_magnitude: Pd=84.9, Pfa=0.88
+Seed 93, unknown bin, SNR -11.0: scan_cnn: Pd=62.3, Pfa=0.61 | correlator_magnitude: Pd=89.0, Pfa=0.71
+Seed 93, unknown bin, SNR -10.5: scan_cnn: Pd=77.3, Pfa=1.60 | correlator_magnitude: Pd=94.0, Pfa=1.25
+Seed 93, unknown bin, SNR -10.0: scan_cnn: Pd=82.4, Pfa=0.80 | correlator_magnitude: Pd=96.2, Pfa=0.95
+Seed 93, unknown bin, SNR  -9.5: scan_cnn: Pd=90.2, Pfa=1.02 | correlator_magnitude: Pd=98.2, Pfa=1.27
+Seed 93, unknown bin, SNR  -9.0: scan_cnn: Pd=93.7, Pfa=1.02 | correlator_magnitude: Pd=99.4, Pfa=0.97
+Seed 93, unknown bin, SNR  -8.5: scan_cnn: Pd=96.9, Pfa=0.89 | correlator_magnitude: Pd=99.7, Pfa=0.94
+Seed 93, unknown bin, SNR  -8.0: scan_cnn: Pd=98.7, Pfa=0.92 | correlator_magnitude: Pd=99.8, Pfa=0.73
+Seed 93, unknown bin, SNR  -7.5: scan_cnn: Pd=99.5, Pfa=1.18 | correlator_magnitude: Pd=100.0, Pfa=0.89
+Seed 93, unknown bin, SNR  -7.0: scan_cnn: Pd=99.9, Pfa=1.26 | correlator_magnitude: Pd=100.0, Pfa=0.90
+Seed 93, unknown bin, SNR  -6.5: scan_cnn: Pd=100.0, Pfa=0.74 | correlator_magnitude: Pd=100.0, Pfa=0.69
+Seed 93, unknown bin, SNR  -6.0: scan_cnn: Pd=100.0, Pfa=0.76 | correlator_magnitude: Pd=100.0, Pfa=0.70
+Seed 93, unknown bin, SNR  -5.5: scan_cnn: Pd=100.0, Pfa=1.05 | correlator_magnitude: Pd=100.0, Pfa=1.56
+Seed 93, unknown bin, SNR  -5.0: scan_cnn: Pd=100.0, Pfa=1.14 | correlator_magnitude: Pd=100.0, Pfa=0.74
+Seed 93, unknown bin, SNR   0.0: scan_cnn: Pd=100.0, Pfa=1.41 | correlator_magnitude: Pd=100.0, Pfa=1.06
+Seed 93, unknown bin, SNR   5.0: scan_cnn: Pd=100.0, Pfa=0.72 | correlator_magnitude: Pd=100.0, Pfa=0.72
